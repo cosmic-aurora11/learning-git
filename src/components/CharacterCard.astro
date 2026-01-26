@@ -1,9 +1,10 @@
 ---
 const { character } = Astro.props;
+const portraitAlt = character.data.portraitAlt ?? `Portrait of ${character.data.name}`;
 ---
 
 <article class="card">
-  <img src={character.data.portrait} alt={`Portrait of ${character.data.name}`} loading="lazy" />
+  <img src={character.data.portrait} alt={portraitAlt} loading="lazy" />
   <h3>{character.data.name}</h3>
   <p class="muted">{character.data.race} · {character.data.class}</p>
   {character.data.blurb && <p>{character.data.blurb}</p>}
