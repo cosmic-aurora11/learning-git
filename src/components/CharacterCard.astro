@@ -1,0 +1,23 @@
+---
+const { character } = Astro.props;
+---
+
+<article class="card">
+  <img src={character.data.portrait} alt={`Portrait of ${character.data.name}`} loading="lazy" />
+  <h3>{character.data.name}</h3>
+  <p class="muted">{character.data.race} · {character.data.class}</p>
+  {character.data.blurb && <p>{character.data.blurb}</p>}
+  <a class="button" href={`/characters/${character.slug}`}>View profile</a>
+</article>
+
+<style>
+  img {
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+  }
+  .muted {
+    color: var(--muted);
+  }
+</style>

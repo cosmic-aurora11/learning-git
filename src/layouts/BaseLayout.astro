@@ -1,0 +1,60 @@
+---
+import '../styles/global.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import SearchBar from '../components/SearchBar.astro';
+
+const { title = 'Campaign Hub', description = '' } = Astro.props;
+const pathname = Astro.url.pathname;
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/characters', label: 'Characters' },
+  { href: '/recaps', label: 'Recaps' },
+  { href: '/lore', label: 'Lore' },
+  { href: '/gym', label: "Player's Gym" }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav">
+        <div>
+          <a href="/" class="chip">Arcane Relay</a>
+        </div>
+        <nav aria-label="Primary">
+          <ul>
+            {navItems.map((item) => {
+              const isActive = item.href === '/'
+                ? pathname === '/'
+                : pathname.startsWith(item.href);
+              return (
+                <li>
+                  <a href={item.href} class={isActive ? 'active' : ''}>{item.label}</a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+        <div style="display:flex; gap:0.75rem; align-items:center;">
+          <SearchBar />
+          <ThemeToggle />
+        </div>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="footer">
+      <div class="container">
+        <p>Built for fast updates, quick reads, and a little arcane flair.</p>
+      </div>
+    </footer>
+  </body>
+</html>

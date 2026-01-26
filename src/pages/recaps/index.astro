@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const recaps = await getCollection('recaps');
+const sortedRecaps = recaps.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const tags = Array.from(new Set(sortedRecaps.flatMap((recap) => recap.data.tags))).sort();
+---
+
+<BaseLayout title="Recaps | Arcane Relay">
+  <section class="section">
+    <div class="container">
+      <h1>Session Recaps</h1>
+      <p class="muted">Search, filter, and relive the story so far.</p>
+      <div class="card" style="margin-top:1.5rem;">
+        <label class="sr-only" for="recap-search">Search recaps</label>
+        <input id="recap-search" type="search" placeholder="Search recaps..." />
+        <div class="tag-list" style="margin-top:1rem;">
+          <button class="chip active" type="button" data-tag="all">All</button>
+          {tags.map((tag) => (
+            <button class="chip" type="button" data-tag={tag}>{tag}</button>
+          ))}
+        </div>
+      </div>
+      <div id="recap-list" class="grid grid-2" style="margin-top:1.5rem;"></div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const recaps = JSON.parse(`${JSON.stringify(sortedRecaps.map((recap) => ({
+    title: recap.data.title,
+    sessionNumber: recap.data.sessionNumber,
+    date: recap.data.date,
+    summary: recap.data.summary,
+    tags: recap.data.tags,
+    slug: recap.slug
+  }))}`);
+
+  const list = document.getElementById('recap-list');
+  const searchInput = document.getElementById('recap-search');
+  const tagButtons = document.querySelectorAll('[data-tag]');
+  let activeTag = 'all';
+
+  const render = () => {
+    const query = searchInput.value.toLowerCase();
+    const filtered = recaps.filter((recap) => {
+      const matchesTag = activeTag === 'all' || recap.tags.includes(activeTag);
+      const matchesQuery = [recap.title, recap.summary, recap.tags.join(' ')].some((field) =>
+        field.toLowerCase().includes(query)
+      );
+      return matchesTag && matchesQuery;
+    });
+
+    list.innerHTML = filtered
+      .map(
+        (recap) => `
+        <article class="card">
+          <div class="tag-list">
+            ${recap.tags.map((tag) => `<span class="chip">${tag}</span>`).join('')}
+          </div>
+          <h3>${recap.title}</h3>
+          <p class="muted">Session ${recap.sessionNumber} · ${recap.date}</p>
+          <p>${recap.summary}</p>
+          <a class="button" href="/recaps/${recap.slug}">Read recap</a>
+        </article>
+      `
+      )
+      .join('');
+  };
+
+  tagButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      activeTag = button.dataset.tag;
+      tagButtons.forEach((btn) => btn.classList.remove('active'));
+      button.classList.add('active');
+      render();
+    });
+  });
+
+  searchInput.addEventListener('input', render);
+  render();
+</script>
+
+<style>
+  input[type='search'] {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    color: inherit;
+  }
+
+  .chip.active {
+    outline: 2px solid var(--accent);
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const characters = await getCollection('characters');
+  return characters.map((character) => ({
+    params: { slug: character.slug },
+    props: { character }
+  }));
+}
+
+const { character } = Astro.props;
+const { Content } = await character.render();
+---
+
+<BaseLayout title={`${character.data.name} | Arcane Relay`}>
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-2">
+        <div>
+          <img src={character.data.portrait} alt={`Portrait of ${character.data.name}`} />
+        </div>
+        <div class="card">
+          <h1>{character.data.name}</h1>
+          <p class="muted">{character.data.race} · {character.data.class}</p>
+          {character.data.playerName && <p>Player: {character.data.playerName}</p>}
+          {character.data.tags && (
+            <div class="tag-list">
+              {character.data.tags.map((tag) => (
+                <span class="chip" key={tag}>{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      <div class="section">
+        <Content />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  img {
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+</style>

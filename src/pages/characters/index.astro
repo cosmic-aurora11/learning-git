@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PartyGoldWidget from '../../components/PartyGoldWidget.astro';
+import CharacterCard from '../../components/CharacterCard.astro';
+import { getCollection } from 'astro:content';
+
+const characters = await getCollection('characters');
+---
+
+<BaseLayout title="Characters | Arcane Relay">
+  <section class="section">
+    <div class="container">
+      <h1>Characters</h1>
+      <p class="muted">Your party roster, spotlight moments, and future allies.</p>
+      <div style="margin:1.5rem 0 2rem;">
+        <PartyGoldWidget />
+      </div>
+      <div class="grid grid-4">
+        {characters.map((character) => (
+          <CharacterCard character={character} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .muted {
+    color: var(--muted);
+  }
+</style>
