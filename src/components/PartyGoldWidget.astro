@@ -1,0 +1,42 @@
+---
+import siteData from '../data/siteData.json';
+
+const { partyGold } = siteData;
+---
+
+<div class="card">
+  <div class="gold-row">
+    <img src="/images/icons/coin.svg" alt="Gold coin" width="32" height="32" />
+    <div>
+      <p class="label">Party Gold</p>
+      <p class="value">{partyGold.total} gp</p>
+      {partyGold.note && <p class="muted">{partyGold.note}</p>}
+    </div>
+  </div>
+</div>
+
+<style>
+  .gold-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .label {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .value {
+    margin: 0.2rem 0 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .muted {
+    margin: 0.2rem 0 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+</style>

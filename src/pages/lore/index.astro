@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const loreEntries = await getCollection('lore');
+const categories = ['Regions/Locations', 'Factions', 'Important NPCs', 'Magical Oddities'];
+const grouped = await Promise.all(
+  categories.map(async (category) => {
+    const entries = loreEntries.filter((entry) => entry.data.category === category);
+    const renderedEntries = await Promise.all(
+      entries.map(async (entry) => ({ entry, Content: (await entry.render()).Content }))
+    );
+    return { category, entries: renderedEntries };
+  })
+);
+---
+
+<BaseLayout title="Lore | Arcane Relay">
+  <section class="section">
+    <div class="container">
+      <h1>Living Lore</h1>
+      <p class="muted">
+        These are the whispers that carry through taverns, carrier ravens, and the places between.
+        Each entry is a story seed waiting to be discovered.
+      </p>
+      {grouped.map((group) => (
+        <section style="margin-top:2rem;">
+          <h2>{group.category}</h2>
+          <div class="accordion" style="margin-top:1rem;">
+            {group.entries.map(({ entry, Content }) => (
+              <details id={entry.slug}>
+                <summary>{entry.data.title}</summary>
+                <p class="muted">{entry.data.summary}</p>
+                <Content />
+              </details>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .muted {
+    color: var(--muted);
+  }
+</style>

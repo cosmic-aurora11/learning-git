@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const workouts = await getCollection('workouts');
+const categories = ['Roleplay reps', 'Combat fundamentals', 'Spellcasting clarity', 'Table teamwork'];
+const grouped = await Promise.all(
+  categories.map(async (category) => {
+    const entries = workouts.filter((workout) => workout.data.category === category);
+    const renderedEntries = await Promise.all(
+      entries.map(async (entry) => ({ entry, Content: (await entry.render()).Content }))
+    );
+    return { category, entries: renderedEntries };
+  })
+);
+---
+
+<BaseLayout title="Player's Gym | Arcane Relay">
+  <section class="section">
+    <div class="container">
+      <h1>Player's Gym</h1>
+      <p class="muted">
+        Welcome to the micro-workout room. Pick a 5–10 minute drill, stretch your creativity,
+        and head back to the table with fresh energy.
+      </p>
+      {grouped.map((group) => (
+        <section style="margin-top:2rem;">
+          <h2>{group.category}</h2>
+          <div class="grid grid-2" style="margin-top:1rem;">
+            {group.entries.map(({ entry, Content }) => (
+              <article class="card">
+                <h3>{entry.data.title}</h3>
+                <p class="muted">{entry.data.summary}</p>
+                <Content />
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .muted {
+    color: var(--muted);
+  }
+</style>

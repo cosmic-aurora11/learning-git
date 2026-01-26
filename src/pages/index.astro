@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NextSessionCard from '../components/NextSessionCard.astro';
+import RecapCard from '../components/RecapCard.astro';
+import { getCollection } from 'astro:content';
+
+const recaps = await getCollection('recaps');
+const latestRecap = recaps
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())[0];
+
+const quickLinks = [
+  { title: 'Start with Recaps', description: 'Catch up on the latest session beats.', href: '/recaps' },
+  { title: 'Meet the Party', description: 'Check the party roster and spotlight moments.', href: '/characters' },
+  { title: 'Dive into Lore', description: 'Discover what the world whispers at night.', href: '/lore' },
+  { title: "Player's Gym", description: 'Micro-workouts to sharpen your play.', href: '/gym' }
+];
+---
+
+<BaseLayout title="Arcane Relay | Campaign Hub" description="A fast, modern hub for campaign recaps, lore, and party updates.">
+  <section class="hero container">
+    <div>
+      <span class="chip">Campaign Hub</span>
+      <h1>Arcane Relay: your D&amp;D command center.</h1>
+      <p>
+        Keep recaps, lore, and character beats in one sleek, searchable place. Update the world
+        each week without touching layout code.
+      </p>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1.5rem;">
+        <a class="button primary" href="/recaps">Read the latest recap</a>
+        <a class="button" href="/characters">View the party</a>
+      </div>
+    </div>
+    <NextSessionCard />
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Quick Links</h2>
+      <div class="grid grid-2" style="margin-top:1.5rem;">
+        {quickLinks.map((link) => (
+          <a class="card" href={link.href}>
+            <h3>{link.title}</h3>
+            <p>{link.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <h2>Latest Recap</h2>
+        <a class="button" href="/recaps">All recaps</a>
+      </div>
+      {latestRecap ? (
+        <div style="margin-top:1.5rem;">
+          <RecapCard recap={latestRecap} />
+        </div>
+      ) : (
+        <p>No recaps yet. Add one to get started.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
