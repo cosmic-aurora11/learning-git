@@ -4,6 +4,7 @@ sessionNumber: 0
 date: "YYYY-MM-DD"
 tags: ["tag1", "tag2"]
 summary: "One-sentence snapshot of the session."
+heroImage: "/images/recaps/your-image.svg"
 ---
 
 ## Where the party is now

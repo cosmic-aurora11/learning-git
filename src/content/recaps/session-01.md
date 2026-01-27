@@ -4,6 +4,7 @@ sessionNumber: 1
 date: "2024-01-20"
 tags: ["dockside", "mystery", "artifact"]
 summary: "The party met at the Sable Docks, chased arcane smugglers, and uncovered a star-forged compass."
+heroImage: "/images/recaps/harbor-sparks.svg"
 ---
 
 ## Where the party is now

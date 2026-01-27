@@ -3,11 +3,7 @@ name: "Macha"
 race: "Elf"
 class: "Paladin"
 tags: ["oathbound", "radiant", "tactician"]
-portrait: "/images/characters/macha.jpg"
-portraitAlt: "Macha, elf paladin."
-level: 3
-hp: 25
-ac: 18
+portrait: "/images/characters/placeholder.svg"
 blurb: "A radiant oathkeeper who never lets a debt go unpaid."
 ---
 

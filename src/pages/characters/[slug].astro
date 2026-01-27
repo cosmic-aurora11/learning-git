@@ -11,11 +11,6 @@ export async function getStaticPaths() {
 }
 
 const { character } = Astro.props;
-const stats = [
-  character.data.level && `Level ${character.data.level}`,
-  character.data.hp && `HP ${character.data.hp}`,
-  character.data.ac && `AC ${character.data.ac}`
-].filter(Boolean).join(' · ');
 const { Content } = await character.render();
 ---
 
@@ -23,10 +18,12 @@ const { Content } = await character.render();
   <section class="section">
     <div class="container">
       <div class="grid grid-2">
+        <div>
+          <img src={character.data.portrait} alt={`Portrait of ${character.data.name}`} />
+        </div>
         <div class="card">
           <h1>{character.data.name}</h1>
           <p class="muted">{character.data.race} · {character.data.class}</p>
-          {stats && <p class="muted">{stats}</p>}
           {character.data.playerName && <p>Player: {character.data.playerName}</p>}
           {character.data.tags && (
             <div class="tag-list">
@@ -35,9 +32,6 @@ const { Content } = await character.render();
               ))}
             </div>
           )}
-        </div>
-        <div>
-          <img src={character.data.portrait} alt={`Portrait of ${character.data.name}`} />
         </div>
       </div>
       <div class="section">
@@ -58,7 +52,3 @@ const { Content } = await character.render();
     color: var(--muted);
   }
 </style>
-
-
-
-

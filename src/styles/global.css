@@ -11,9 +11,7 @@
   --chip: rgba(56, 189, 248, 0.16);
   --border: rgba(148, 163, 184, 0.2);
   --shadow: 0 24px 60px rgba(15, 23, 42, 0.6);
-  --font-display: "Cinzel Decorative", "Playfair Display", "Cormorant Garamond", "Garamond", "Georgia", serif;
-  --font-body: "Iowan Old Style", "Palatino Linotype", "Palatino", "Georgia", "Times New Roman", serif;
-  --text-base: 1.05rem;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
 [data-theme="light"] {
@@ -41,8 +39,6 @@ body {
     var(--bg);
   color: var(--text);
   min-height: 100vh;
-  font-family: var(--font-body);
-  line-height: 1.6;
 }
 
 a {
@@ -60,10 +56,6 @@ input:focus-visible {
 img {
   max-width: 100%;
   display: block;
-}
-
-p {
-  font-size: var(--text-base);
 }
 
 .container {
@@ -135,7 +127,7 @@ nav a:hover {
 
 .hero p {
   color: var(--muted);
-  font-size: calc(var(--text-base) + 0.1rem);
+  font-size: 1.1rem;
 }
 
 .card {
@@ -144,12 +136,6 @@ nav a:hover {
   border-radius: 18px;
   padding: 1.5rem;
   box-shadow: var(--shadow);
-}
-
-.quick-links .card h3 {
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin-top: 0.2rem;
 }
 
 .grid {

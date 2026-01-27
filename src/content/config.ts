@@ -7,7 +7,8 @@ const recaps = defineCollection({
     sessionNumber: z.number(),
     date: z.string(),
     tags: z.array(z.string()),
-    summary: z.string()
+    summary: z.string(),
+    heroImage: z.string().optional()
   })
 });
 

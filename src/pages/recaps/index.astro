@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 const recaps = await getCollection('recaps');
 const sortedRecaps = recaps.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 const tags = Array.from(new Set(sortedRecaps.flatMap((recap) => recap.data.tags))).sort();
+const useTimelineLayout = true;
 ---
 
 <BaseLayout title="Recaps | Arcane Relay">
@@ -12,75 +13,106 @@ const tags = Array.from(new Set(sortedRecaps.flatMap((recap) => recap.data.tags)
     <div class="container">
       <h1>Session Recaps</h1>
       <p class="muted">Search, filter, and relive the story so far.</p>
-      <div class="card" style="margin-top:1.5rem;">
-        <label class="sr-only" for="recap-search">Search recaps</label>
-        <input id="recap-search" type="search" placeholder="Search recaps..." />
-        <div class="tag-list" style="margin-top:1rem;">
-          <button class="chip active" type="button" data-tag="all">All</button>
-          {tags.map((tag) => (
-            <button class="chip" type="button" data-tag={tag}>{tag}</button>
+      {useTimelineLayout ? (
+        <div class="timeline" style="margin-top:2rem;">
+          {sortedRecaps.map((recap, index) => (
+            <article class={`timeline-item ${index % 2 === 1 ? 'reverse' : ''}`}>
+              <div class="timeline-media">
+                {recap.data.heroImage ? (
+                  <img src={recap.data.heroImage} alt={`Recap art for ${recap.data.title}`} loading="lazy" />
+                ) : (
+                  <div class="timeline-placeholder">No image yet</div>
+                )}
+              </div>
+              <div class="timeline-content card">
+                <div class="timeline-label">Session {recap.data.sessionNumber} · {recap.data.date}</div>
+                <h3>{recap.data.title}</h3>
+                <p class="muted">{recap.data.summary}</p>
+                <div class="tag-list">
+                  {recap.data.tags.map((tag) => (
+                    <span class="chip" key={tag}>{tag}</span>
+                  ))}
+                </div>
+                <a class="button" href={`/recaps/${recap.slug}`}>Read recap</a>
+              </div>
+            </article>
           ))}
         </div>
-      </div>
-      <div id="recap-list" class="grid grid-2" style="margin-top:1.5rem;"></div>
+      ) : (
+        <>
+          <div class="card" style="margin-top:1.5rem;">
+            <label class="sr-only" for="recap-search">Search recaps</label>
+            <input id="recap-search" type="search" placeholder="Search recaps..." />
+            <div class="tag-list" style="margin-top:1rem;">
+              <button class="chip active" type="button" data-tag="all">All</button>
+              {tags.map((tag) => (
+                <button class="chip" type="button" data-tag={tag}>{tag}</button>
+              ))}
+            </div>
+          </div>
+          <div id="recap-list" class="grid grid-2" style="margin-top:1.5rem;"></div>
+        </>
+      )}
     </div>
   </section>
 </BaseLayout>
 
-<script>
-  const recaps = JSON.parse(`${JSON.stringify(sortedRecaps.map((recap) => ({
-    title: recap.data.title,
-    sessionNumber: recap.data.sessionNumber,
-    date: recap.data.date,
-    summary: recap.data.summary,
-    tags: recap.data.tags,
-    slug: recap.slug
-  }))}`);
+{!useTimelineLayout && (
+  <script>
+    const recaps = JSON.parse(`${JSON.stringify(sortedRecaps.map((recap) => ({
+      title: recap.data.title,
+      sessionNumber: recap.data.sessionNumber,
+      date: recap.data.date,
+      summary: recap.data.summary,
+      tags: recap.data.tags,
+      slug: recap.slug
+    }))}`);
 
-  const list = document.getElementById('recap-list');
-  const searchInput = document.getElementById('recap-search');
-  const tagButtons = document.querySelectorAll('[data-tag]');
-  let activeTag = 'all';
+    const list = document.getElementById('recap-list');
+    const searchInput = document.getElementById('recap-search');
+    const tagButtons = document.querySelectorAll('[data-tag]');
+    let activeTag = 'all';
 
-  const render = () => {
-    const query = searchInput.value.toLowerCase();
-    const filtered = recaps.filter((recap) => {
-      const matchesTag = activeTag === 'all' || recap.tags.includes(activeTag);
-      const matchesQuery = [recap.title, recap.summary, recap.tags.join(' ')].some((field) =>
-        field.toLowerCase().includes(query)
-      );
-      return matchesTag && matchesQuery;
+    const render = () => {
+      const query = searchInput.value.toLowerCase();
+      const filtered = recaps.filter((recap) => {
+        const matchesTag = activeTag === 'all' || recap.tags.includes(activeTag);
+        const matchesQuery = [recap.title, recap.summary, recap.tags.join(' ')].some((field) =>
+          field.toLowerCase().includes(query)
+        );
+        return matchesTag && matchesQuery;
+      });
+
+      list.innerHTML = filtered
+        .map(
+          (recap) => `
+          <article class="card">
+            <div class="tag-list">
+              ${recap.tags.map((tag) => `<span class="chip">${tag}</span>`).join('')}
+            </div>
+            <h3>${recap.title}</h3>
+            <p class="muted">Session ${recap.sessionNumber} · ${recap.date}</p>
+            <p>${recap.summary}</p>
+            <a class="button" href="/recaps/${recap.slug}">Read recap</a>
+          </article>
+        `
+        )
+        .join('');
+    };
+
+    tagButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        activeTag = button.dataset.tag;
+        tagButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+        render();
+      });
     });
 
-    list.innerHTML = filtered
-      .map(
-        (recap) => `
-        <article class="card">
-          <div class="tag-list">
-            ${recap.tags.map((tag) => `<span class="chip">${tag}</span>`).join('')}
-          </div>
-          <h3>${recap.title}</h3>
-          <p class="muted">Session ${recap.sessionNumber} · ${recap.date}</p>
-          <p>${recap.summary}</p>
-          <a class="button" href="/recaps/${recap.slug}">Read recap</a>
-        </article>
-      `
-      )
-      .join('');
-  };
-
-  tagButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      activeTag = button.dataset.tag;
-      tagButtons.forEach((btn) => btn.classList.remove('active'));
-      button.classList.add('active');
-      render();
-    });
-  });
-
-  searchInput.addEventListener('input', render);
-  render();
-</script>
+    searchInput.addEventListener('input', render);
+    render();
+  </script>
+)}
 
 <style>
   input[type='search'] {
@@ -109,5 +141,94 @@ const tags = Array.from(new Set(sortedRecaps.flatMap((recap) => recap.data.tags)
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
+  }
+
+  .timeline {
+    display: grid;
+    gap: 2rem;
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 0.4rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, transparent, var(--accent), transparent);
+    opacity: 0.5;
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: minmax(200px, 260px) 1fr;
+    gap: 1.5rem;
+    position: relative;
+  }
+
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -0.1rem;
+    top: 2rem;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
+  }
+
+  .timeline-item.reverse {
+    grid-template-columns: 1fr minmax(200px, 260px);
+  }
+
+  .timeline-item.reverse .timeline-media {
+    order: 2;
+  }
+
+  .timeline-media img,
+  .timeline-placeholder {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    min-height: 180px;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .timeline-content {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .timeline-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 720px) {
+    .timeline {
+      padding-left: 0;
+    }
+
+    .timeline::before {
+      display: none;
+    }
+
+    .timeline-item,
+    .timeline-item.reverse {
+      grid-template-columns: 1fr;
+    }
+
+    .timeline-item::before {
+      display: none;
+    }
   }
 </style>
