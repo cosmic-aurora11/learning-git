@@ -80,6 +80,19 @@ header .nav {
   gap: 1rem;
 }
 
+.site-brand {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
 nav ul {
   display: flex;
   gap: 1.2rem;
