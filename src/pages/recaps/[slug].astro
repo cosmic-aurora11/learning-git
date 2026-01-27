@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const recaps = await getCollection('recaps');
+  return recaps.map((recap) => ({
+    params: { slug: recap.slug },
+    props: { recap }
+  }));
+}
+
+const { recap } = Astro.props;
+const allRecaps = await getCollection('recaps');
+const sortedRecaps = allRecaps.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+const index = sortedRecaps.findIndex((item) => item.slug === recap.slug);
+const previous = sortedRecaps[index + 1];
+const next = sortedRecaps[index - 1];
+const { Content } = await recap.render();
+---
+
+<BaseLayout title={`${recap.data.title} | Arcane Relay`}>
+  <section class="section">
+    <div class="container">
+      <a class="chip" href="/recaps">← Back to recaps</a>
+      <div class="card" style="margin-top:1.5rem;">
+        <h1>{recap.data.title}</h1>
+        <p class="muted">Session {recap.data.sessionNumber} · {recap.data.date}</p>
+        <div class="tag-list">
+          {recap.data.tags.map((tag) => (
+            <span class="chip" key={tag}>{tag}</span>
+          ))}
+        </div>
+      </div>
+      <article class="section">
+        <Content />
+      </article>
+      <nav class="grid grid-2" aria-label="Recap navigation">
+        {previous ? (
+          <a class="card" href={`/recaps/${previous.slug}`}>
+            <p class="muted">Previous</p>
+            <strong>{previous.data.title}</strong>
+          </a>
+        ) : (
+          <div class="card" aria-disabled="true">
+            <p class="muted">Previous</p>
+            <strong>None yet</strong>
+          </div>
+        )}
+        {next ? (
+          <a class="card" href={`/recaps/${next.slug}`}>
+            <p class="muted">Next</p>
+            <strong>{next.data.title}</strong>
+          </a>
+        ) : (
+          <div class="card" aria-disabled="true">
+            <p class="muted">Next</p>
+            <strong>None yet</strong>
+          </div>
+        )}
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .muted {
+    color: var(--muted);
+  }
+</style>
