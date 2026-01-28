@@ -21,20 +21,15 @@ const next = sortedRecaps[index - 1];
 const { Content } = await recap.render();
 ---
 
-<BaseLayout title={`${recap.data.title} | Arcane Relay`}>
-  <section class="section">
+<BaseLayout title={`${recap.data.title} | The Arcane Atlas`}>
+  <section class="section page-hero">
     <div class="container">
       <a class="chip" href="/recaps">← Back to recaps</a>
       <div class="card" style="margin-top:1.5rem;">
         <h1>{recap.data.title}</h1>
-        <p class="muted">Session {recap.data.sessionNumber} · {recap.data.date}</p>
-        <div class="tag-list">
-          {recap.data.tags.map((tag) => (
-            <span class="chip" key={tag}>{tag}</span>
-          ))}
-        </div>
+        <p class="muted">Session #: {recap.data.sessionNumber} | Date: {recap.data.date}</p>
       </div>
-      <article class="section">
+      <article class="section recap-content">
         <Content />
       </article>
       <nav class="grid grid-2" aria-label="Recap navigation">
@@ -68,5 +63,9 @@ const { Content } = await recap.render();
 <style>
   .muted {
     color: var(--muted);
+  }
+
+  .recap-content ul li + li {
+    margin-top: 10px;
   }
 </style>

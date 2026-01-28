@@ -5,35 +5,24 @@ import { getCollection } from 'astro:content';
 const recaps = await getCollection('recaps');
 const sortedRecaps = recaps.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 const tags = Array.from(new Set(sortedRecaps.flatMap((recap) => recap.data.tags))).sort();
+const timelineRecaps = sortedRecaps.filter((recap) => recap.data.sessionNumber === 4);
 const useTimelineLayout = true;
 ---
 
-<BaseLayout title="Recaps | Arcane Relay">
-  <section class="section">
+<BaseLayout title="Recaps | The Arcane Atlas">
+  <section class="section page-hero">
     <div class="container">
       <h1>Session Recaps</h1>
       <p class="muted">Search, filter, and relive the story so far.</p>
       {useTimelineLayout ? (
         <div class="timeline" style="margin-top:2rem;">
-          {sortedRecaps.map((recap, index) => (
-            <article class={`timeline-item ${index % 2 === 1 ? 'reverse' : ''}`}>
-              <div class="timeline-media">
-                {recap.data.heroImage ? (
-                  <img src={recap.data.heroImage} alt={`Recap art for ${recap.data.title}`} loading="lazy" />
-                ) : (
-                  <div class="timeline-placeholder">No image yet</div>
-                )}
-              </div>
+          {timelineRecaps.map((recap) => (
+            <article class="timeline-item">
               <div class="timeline-content card">
                 <div class="timeline-label">Session {recap.data.sessionNumber} · {recap.data.date}</div>
                 <h3>{recap.data.title}</h3>
                 <p class="muted">{recap.data.summary}</p>
-                <div class="tag-list">
-                  {recap.data.tags.map((tag) => (
-                    <span class="chip" key={tag}>{tag}</span>
-                  ))}
-                </div>
-                <a class="button" href={`/recaps/${recap.slug}`}>Read recap</a>
+                <a class="button" href={`/recaps/${recap.slug}`}>Read Full Recap</a>
               </div>
             </article>
           ))}
@@ -59,7 +48,7 @@ const useTimelineLayout = true;
 
 {!useTimelineLayout && (
   <script>
-    const recaps = JSON.parse(`${JSON.stringify(sortedRecaps.map((recap) => ({
+    const recaps = JSON.parse(`${JSON.stringify(timelineRecaps.map((recap) => ({
       title: recap.data.title,
       sessionNumber: recap.data.sessionNumber,
       date: recap.data.date,
@@ -87,13 +76,10 @@ const useTimelineLayout = true;
         .map(
           (recap) => `
           <article class="card">
-            <div class="tag-list">
-              ${recap.tags.map((tag) => `<span class="chip">${tag}</span>`).join('')}
-            </div>
             <h3>${recap.title}</h3>
             <p class="muted">Session ${recap.sessionNumber} · ${recap.date}</p>
             <p>${recap.summary}</p>
-            <a class="button" href="/recaps/${recap.slug}">Read recap</a>
+            <a class="button" href="/recaps/${recap.slug}">Read Full Recap</a>
           </article>
         `
         )
@@ -162,9 +148,8 @@ const useTimelineLayout = true;
   }
 
   .timeline-item {
-    display: grid;
-    grid-template-columns: minmax(200px, 260px) 1fr;
-    gap: 1.5rem;
+    display: block;
+    padding-left: 1.5rem;
     position: relative;
   }
 
@@ -172,33 +157,13 @@ const useTimelineLayout = true;
     content: "";
     position: absolute;
     left: -0.1rem;
-    top: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
     width: 14px;
     height: 14px;
     border-radius: 50%;
     background: var(--accent);
     box-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
-  }
-
-  .timeline-item.reverse {
-    grid-template-columns: 1fr minmax(200px, 260px);
-  }
-
-  .timeline-item.reverse .timeline-media {
-    order: 2;
-  }
-
-  .timeline-media img,
-  .timeline-placeholder {
-    width: 100%;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    background: var(--surface-alt);
-    min-height: 180px;
-    display: grid;
-    place-items: center;
-    color: var(--muted);
-    text-align: center;
   }
 
   .timeline-content {
@@ -222,13 +187,9 @@ const useTimelineLayout = true;
       display: none;
     }
 
-    .timeline-item,
-    .timeline-item.reverse {
-      grid-template-columns: 1fr;
-    }
-
     .timeline-item::before {
       display: none;
     }
   }
 </style>
+

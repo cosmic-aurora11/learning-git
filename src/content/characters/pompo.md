@@ -4,6 +4,7 @@ race: "Human"
 class: "Sorcerer"
 tags: ["arcane", "improv", "wildfire"]
 portrait: "/images/characters/placeholder.svg"
+sheetUrl: "https://drive.google.com/file/d/1zEylCzVL5UIa7bY_cQ3lEU42ZhTHfVWa/view?usp=sharing"
 blurb: "A spark-happy sorcerer who treats magic like a conversation." 
 ---
 

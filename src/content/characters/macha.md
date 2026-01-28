@@ -4,6 +4,7 @@ race: "Elf"
 class: "Paladin"
 tags: ["oathbound", "radiant", "tactician"]
 portrait: "/images/characters/placeholder.svg"
+sheetUrl: "https://drive.google.com/file/d/1TR-F5vYHqBMNM1pnbQFbvE93h7A95NsV/view?usp=sharing"
 blurb: "A radiant oathkeeper who never lets a debt go unpaid."
 ---
 

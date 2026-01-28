@@ -6,12 +6,14 @@ import SearchBar from '../components/SearchBar.astro';
 const { title = 'Campaign Hub', description = '' } = Astro.props;
 const pathname = Astro.url.pathname;
 const navItems = [
-  { href: '/', label: 'Home' },
   { href: '/characters', label: 'Characters' },
   { href: '/recaps', label: 'Recaps' },
   { href: '/lore', label: 'Lore' },
   { href: '/gym', label: "Player's Gym" }
 ];
+const navSplitIndex = Math.ceil(navItems.length / 2);
+const leftNavItems = navItems.slice(0, navSplitIndex);
+const rightNavItems = navItems.slice(navSplitIndex);
 ---
 
 <!doctype html>
@@ -25,10 +27,43 @@ const navItems = [
   <body>
     <header class="site-header">
       <div class="container nav">
-        <div>
-          <a href="/" class="chip">Arcane Relay</a>
+        <div class="site-header__bar">
+          <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <span class="menu-toggle__icon" aria-hidden="true"></span>
+          </button>
+          <nav class="site-nav site-nav--left" aria-label="Primary">
+            <ul>
+              {leftNavItems.map((item) => {
+                const isActive = item.href === '/'
+                  ? pathname === '/'
+                  : pathname.startsWith(item.href);
+                return (
+                  <li>
+                    <a href={item.href} class={isActive ? 'active' : ''}>{item.label}</a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+          <a href="/" class="site-logo" aria-label="The Arcane Atlas home">
+            <span class="site-logo__text">The Arcane Atlas</span>
+          </a>
+          <nav class="site-nav site-nav--right" aria-label="Secondary">
+            <ul>
+              {rightNavItems.map((item) => {
+                const isActive = item.href === '/'
+                  ? pathname === '/'
+                  : pathname.startsWith(item.href);
+                return (
+                  <li>
+                    <a href={item.href} class={isActive ? 'active' : ''}>{item.label}</a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
         </div>
-        <nav aria-label="Primary">
+        <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile">
           <ul>
             {navItems.map((item) => {
               const isActive = item.href === '/'
@@ -42,10 +77,6 @@ const navItems = [
             })}
           </ul>
         </nav>
-        <div style="display:flex; gap:0.75rem; align-items:center;">
-          <SearchBar />
-          <ThemeToggle />
-        </div>
       </div>
     </header>
     <main>
@@ -53,8 +84,24 @@ const navItems = [
     </main>
     <footer class="footer">
       <div class="container">
-        <p>Built for fast updates, quick reads, and a little arcane flair.</p>
+        <p>Built for fast updates, quick reads, and a little The Arcane Atlas charm.</p>
+        <div class="footer-divider" role="presentation"></div>
+        <div class="footer-tools">
+          <SearchBar />
+          <ThemeToggle />
+        </div>
       </div>
     </footer>
+    <script>
+      const menuToggle = document.querySelector('.menu-toggle');
+      const mobileNav = document.getElementById('mobile-nav');
+
+      if (menuToggle && mobileNav) {
+        menuToggle.addEventListener('click', () => {
+          const isOpen = mobileNav.classList.toggle('is-open');
+          menuToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+      }
+    </script>
   </body>
 </html>

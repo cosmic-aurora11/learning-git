@@ -7,8 +7,8 @@ import { getCollection } from 'astro:content';
 const characters = await getCollection('characters');
 ---
 
-<BaseLayout title="Characters | Arcane Relay">
-  <section class="section">
+<BaseLayout title="Characters | The Arcane Atlas">
+  <section class="section page-hero">
     <div class="container">
       <h1>Characters</h1>
       <p class="muted">Your party roster, spotlight moments, and future allies.</p>
@@ -29,3 +29,4 @@ const characters = await getCollection('characters');
     color: var(--muted);
   }
 </style>
+

@@ -14,13 +14,10 @@ const { character } = Astro.props;
 const { Content } = await character.render();
 ---
 
-<BaseLayout title={`${character.data.name} | Arcane Relay`}>
-  <section class="section">
+<BaseLayout title={`${character.data.name} | The Arcane Atlas`}>
+  <section class="section page-hero">
     <div class="container">
-      <div class="grid grid-2">
-        <div>
-          <img src={character.data.portrait} alt={`Portrait of ${character.data.name}`} />
-        </div>
+      <div class="grid grid-2 character-header">
         <div class="card">
           <h1>{character.data.name}</h1>
           <p class="muted">{character.data.race} · {character.data.class}</p>
@@ -32,6 +29,14 @@ const { Content } = await character.render();
               ))}
             </div>
           )}
+          {character.data.sheetUrl && (
+            <a class="button" href={character.data.sheetUrl} target="_blank" rel="noreferrer">
+              Character Sheet
+            </a>
+          )}
+        </div>
+        <div>
+          <img src={character.data.portrait} alt={`Portrait of ${character.data.name}`} />
         </div>
       </div>
       <div class="section">
@@ -50,5 +55,9 @@ const { Content } = await character.render();
 
   .muted {
     color: var(--muted);
+  }
+
+  .character-header .button {
+    margin-top: 0.75rem;
   }
 </style>

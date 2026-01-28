@@ -1,18 +1,42 @@
 ---
 import siteData from '../data/siteData.json';
 
-const { nextSession } = siteData;
+const { session } = Astro.props;
+const nextSession = session || siteData.nextSession;
 ---
 
-<div class="card next-session">
-  <h3>Next Session</h3>
-  <p><strong>{nextSession.date}</strong> · {nextSession.time}</p>
-  {nextSession.location && <p>📍 {nextSession.location}</p>}
+<div class="card next-session star-widget star-widget--elevated" aria-label="Next session details">
+  <div class="star-widget__header">
+    <span class="star-widget__star" aria-hidden="true">✦</span>
+    <span>Next Session</span>
+  </div>
+  <h3 class="star-widget__date">{nextSession.date}</h3>
+  <p class="star-widget__detail"><span class="star-widget__icon" aria-hidden="true">🕒</span>{nextSession.time}</p>
+  {nextSession.location && (
+    <p class="star-widget__detail">
+      <span class="star-widget__icon" aria-hidden="true">📍</span>
+      <span>{nextSession.location}</span>
+    </p>
+  )}
   {nextSession.note && <p class="muted">{nextSession.note}</p>}
+  <div class="star-widget__actions" aria-label="Session actions">
+    <a class="button" href={nextSession.calendarUrl || '#'}>Add to Google Calendar</a>
+  </div>
 </div>
 
 <style>
   .muted {
     color: var(--muted);
+  }
+
+  .star-widget__actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-top: var(--space-4);
+  }
+
+  .star-widget__date {
+    margin-top: var(--space-3);
   }
 </style>

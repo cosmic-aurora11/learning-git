@@ -21,7 +21,8 @@ const characters = defineCollection({
     playerName: z.string().optional(),
     tags: z.array(z.string()).optional(),
     portrait: z.string(),
-    blurb: z.string().optional()
+    blurb: z.string().optional(),
+    sheetUrl: z.string().url().optional()
   })
 });
 

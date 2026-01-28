@@ -3,8 +3,9 @@ name: "Rock"
 race: "Dwarf"
 class: "Barbarian"
 tags: ["bruiser", "axe", "frontline"]
-portrait: "/images/characters/placeholder.svg"
-blurb: "A storm-tempered brawler who breaks through the impossible."
+portrait: "/images/characters/rock.png"
+sheetUrl: "https://drive.google.com/file/d/1b-nSmKTmt9cb8g1bjfgqTVWr6ShmrHUy/view?usp=sharing"
+blurb: "A dwarf who balances violence and nourishment, battle and hearth, gruffness and joy."
 ---
 
 ## Overview

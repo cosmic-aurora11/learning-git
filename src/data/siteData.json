@@ -1,9 +1,11 @@
 {
   "nextSession": {
-    "date": "2024-02-10",
-    "time": "7:00 PM",
-    "location": "Eris's place",
-    "note": "Bring character sheets and your new spell lists."
+    "date": "Sat, Jan 31st 2026",
+    "time": "11:00 AM",
+    "location": "V&L's Place",
+    "note": "Bring your dice and be ready to rumble.",
+    "agendaUrl": "#",
+    "calendarUrl": "https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=MHZiMWxhbXJzNDJzamI1b2ZvNTByMGQ3M2IgdmJlbmF2aWRlczExQG0&tmsrc=vbenavides11%40gmail.com"
   },
   "partyGold": {
     "total": 125,

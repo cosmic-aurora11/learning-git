@@ -1,26 +1,34 @@
 ---
-title: "Session Title"
+title: "Session Recap — [Title]"
 sessionNumber: 0
-date: "YYYY-MM-DD"
-tags: ["tag1", "tag2"]
-summary: "One-sentence snapshot of the session."
-heroImage: "/images/recaps/your-image.svg"
+date: "MM/DD/YY"
+tags: ["location", "faction", "npc"]
+summary: "One-sentence summary of the session."
 ---
 
-## Where the party is now
-- Location and immediate status.
+## 📍 Current Situation
+Add a short paragraph describing where the party is and what they're doing. Use **<span class="recap-location">Location</span>** for places and **<span class="recap-name">Name</span>** for non-player names. Use **<span class="recap-faction">Order of the Gauntlet</span>** for the faction.
 
-## What changed in the world
-- Big shifts, rumors, or consequences.
+---
 
-## NPCs encountered
-- **Name** — quick descriptor.
+## ⚡ Events
+- First key event involving **<span class="recap-name">NPC Name</span>** in **<span class="recap-location">Location</span>**.
+- Second key event involving **<span class="recap-name">NPC Name</span>**.
+- Third key event tied to **<span class="recap-faction">Order of the Gauntlet</span>**.
 
-## Loot / rewards
-- Items, gold, favors.
+---
 
-## Unresolved threads (dangling hooks)
-- Questions or unresolved plot lines.
+## 🔍 Learned
+- Key discovery involving **<span class="recap-name">NPC Name</span>**.
+- Another important detail learned in **<span class="recap-location">Location</span>**.
 
-## Next time
-- A teaser for the next session.
+---
+
+## 🧩 Unresolved
+- Open thread that needs follow-up around **<span class="recap-name">NPC Name</span>**.
+- Another unresolved question or hook tied to **<span class="recap-location">Location</span>**.
+
+---
+
+## 🎯 Stakes
+- What happens if the party delays or fails.
