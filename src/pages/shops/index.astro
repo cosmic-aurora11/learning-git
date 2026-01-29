@@ -213,6 +213,7 @@ const anyOpen = openCount > 0;
     inset: 0;
     display: none;
     place-items: center;
+    padding: 16px;
     z-index: 30;
   }
 
@@ -230,7 +231,9 @@ const anyOpen = openCount > 0;
   .modal-card {
     position: relative;
     z-index: 1;
-    width: min(480px, 90vw);
+    width: min(560px, 100%);
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
     border-radius: var(--radius-3);
     background: var(--card);
     border: 1px solid var(--border);
