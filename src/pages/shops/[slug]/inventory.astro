@@ -1,0 +1,393 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import shops from '../../../data/shops.json';
+
+const itemFiles = import.meta.glob('../../../data/shops/*.items.json', { eager: true });
+const itemDataBySlug = Object.fromEntries(
+  Object.entries(itemFiles).map(([path, module]) => {
+    const slug = path.split('/').pop().replace('.items.json', '');
+    return [slug, module.default ?? module];
+  })
+);
+
+export function getStaticPaths() {
+  return shops.map((shop) => ({
+    params: { slug: shop.slug },
+    props: { shop }
+  }));
+}
+
+const { shop } = Astro.props;
+const isOpen = shop.isOpen;
+const items = itemDataBySlug[shop.slug] ?? [];
+const hasItems = items.length > 0;
+const initialItem = hasItems ? items[0] : null;
+
+const formatDescription = (text) =>
+  text
+    ? text
+        .split(/\n{2,}/)
+        .map((block) => block.split('\n').filter(Boolean))
+        .filter((block) => block.length)
+    : [];
+---
+
+<BaseLayout title={`${shop.name} Inventory | The Arcane Atlas`}>
+  <section class="section page-hero shop-hero">
+    <div class="container">
+      <h1>{shop.name}</h1>
+      <p class="shop-location">{shop.location}</p>
+      <p class="muted">{shop.flavor}</p>
+      <div class={`status-pill ${isOpen ? 'open' : 'closed'}`}>
+        {isOpen ? 'Open today' : 'Closed today'}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      {isOpen ? (
+        <>
+          <div class="section-header">
+            <h2>Inventory</h2>
+            <p class="muted">Browse curated wares and various whimsies.</p>
+          </div>
+          <div class="inventory-catalog">
+            {hasItems ? (
+              <>
+                <div class="card inventory-list" role="listbox" aria-label="Shop inventory">
+                  <div class="inventory-list__header">
+                    <span>Item</span>
+                    <span>Price</span>
+                  </div>
+                  <div class="inventory-list__body">
+                    {items.map((item, index) => (
+                      <button
+                        class={`inventory-row ${index === 0 ? 'is-selected' : ''}`}
+                        type="button"
+                        aria-selected={index === 0 ? 'true' : 'false'}
+                        data-name={item.name}
+                        data-price={item.price}
+                        data-type={item.type}
+                        data-rarity={item.rarity}
+                        data-description={JSON.stringify(item.description)}
+                      >
+                        <span class="inventory-row__name">{item.name}</span>
+                        <span class="inventory-row__price">{item.price}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div class="card inventory-detail" data-detail>
+                  {initialItem ? (
+                    <div class="inventory-detail__content">
+                      <h3 class="inventory-detail__name">{initialItem.name}</h3>
+                      <p class="inventory-detail__meta muted">
+                        {initialItem.type} &bull; {initialItem.rarity}
+                      </p>
+                      <div class="inventory-detail__divider"></div>
+                      <div class="inventory-detail__description" data-detail-description>
+                        {formatDescription(initialItem.description).map((block) => (
+                          <p>
+                            {block.map((line, lineIndex) =>
+                              lineIndex === 0 ? line : (
+                                <>
+                                  <br />
+                                  {line}
+                                </>
+                              )
+                            )}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div class="inventory-detail__content inventory-empty">
+                      <h3>No stock available right now.</h3>
+                      <p class="muted">Check back later for new arrivals.</p>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div class="card inventory-empty">
+                  <h3>No stock available right now.</h3>
+                  <p class="muted">This shop is open but temporarily out of inventory.</p>
+                </div>
+                <div class="card inventory-empty">
+                  <h3>No stock available right now.</h3>
+                  <p class="muted">Please check back later for new listings.</p>
+                </div>
+              </>
+            )}
+          </div>
+        </>
+      ) : (
+        <div class="card closed-message">
+          <h2>Inventory unavailable</h2>
+          <p class="muted">
+            {shop.name} is currently closed. Return to the shops list or check back later.
+          </p>
+          <a class="button" href="/shops">Back to shops</a>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .muted {
+    color: var(--muted);
+  }
+
+  .shop-hero {
+    padding-bottom: var(--space-7);
+  }
+
+  .shop-location {
+    color: var(--muted);
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .status-pill.open {
+    background: rgba(74, 222, 128, 0.15);
+    color: #86efac;
+    border: 1px solid rgba(74, 222, 128, 0.35);
+  }
+
+  .status-pill.closed {
+    background: rgba(148, 163, 184, 0.12);
+    color: #cbd5f5;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+  }
+
+  .inventory-catalog {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .inventory-list {
+    padding: var(--space-4);
+  }
+
+  .inventory-list__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: var(--text-xs);
+    color: var(--muted);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .inventory-list__body {
+    margin-top: var(--space-3);
+    display: grid;
+    gap: 0.35rem;
+    max-height: 420px;
+    overflow: auto;
+    padding-right: 0.35rem;
+  }
+
+  .inventory-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-2);
+    border: 1px solid transparent;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .inventory-row:hover {
+    background: rgba(127, 191, 224, 0.08);
+    border-color: rgba(127, 191, 224, 0.25);
+  }
+
+  .inventory-row.is-selected {
+    background: rgba(74, 222, 128, 0.14);
+    border-color: rgba(74, 222, 128, 0.45);
+    box-shadow: inset 3px 0 0 rgba(74, 222, 128, 0.8);
+  }
+
+  .inventory-row__name {
+    font-weight: 600;
+  }
+
+  .inventory-row__price {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .inventory-detail {
+    padding: var(--space-5);
+    position: relative;
+  }
+
+  .inventory-detail__content {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .inventory-detail__name {
+    margin: 0;
+    font-size: var(--text-2xl);
+  }
+
+  .inventory-detail__meta {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  .inventory-detail__divider {
+    height: 1px;
+    width: 100%;
+    background: rgba(148, 163, 184, 0.25);
+  }
+
+  .inventory-detail__description p {
+    margin: 0 0 var(--space-3);
+    color: var(--text);
+  }
+
+  .inventory-detail__description p:last-child {
+    margin-bottom: 0;
+  }
+
+  .inventory-detail.is-animating .inventory-detail__content {
+    animation: detailFade 220ms ease;
+  }
+
+  .inventory-empty {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+  }
+
+  @keyframes detailFade {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .closed-message {
+    max-width: 520px;
+  }
+
+  @media (min-width: 960px) {
+    .inventory-catalog {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      align-items: start;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .inventory-list__body {
+      max-height: 320px;
+    }
+  }
+</style>
+
+{isOpen && hasItems && (
+  <script>
+    const rows = Array.from(document.querySelectorAll('.inventory-row'));
+    const detail = document.querySelector('[data-detail]');
+    const detailName = document.querySelector('.inventory-detail__name');
+    const detailMeta = document.querySelector('.inventory-detail__meta');
+    const detailDescription = document.querySelector('[data-detail-description]');
+
+    const renderDescription = (text) => {
+      if (!detailDescription) return;
+      const blocks = text
+        .split(/\n{2,}/)
+        .map((block) => block.split('\n').filter(Boolean))
+        .filter((block) => block.length);
+      detailDescription.innerHTML = blocks
+        .map((block) => `<p>${block.map((line) => line).join('<br />')}</p>`)
+        .join('');
+    };
+
+    const setSelected = (row) => {
+      rows.forEach((btn) => {
+        const isActive = btn === row;
+        btn.classList.toggle('is-selected', isActive);
+        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      if (!detail || !detailName || !detailMeta || !detailDescription) return;
+
+      detail.classList.remove('is-animating');
+      void detail.offsetWidth;
+      detail.classList.add('is-animating');
+
+      const name = row.getAttribute('data-name') || '';
+      const type = row.getAttribute('data-type') || '';
+      const rarity = row.getAttribute('data-rarity') || '';
+      const rawDescription = row.getAttribute('data-description') || '""';
+      let description = '';
+      try {
+        description = JSON.parse(rawDescription);
+      } catch {
+        description = rawDescription;
+      }
+
+      detailName.textContent = name;
+      detailMeta.textContent = `${type} • ${rarity}`;
+      renderDescription(description);
+    };
+
+    rows.forEach((row) => {
+      row.addEventListener('click', () => setSelected(row));
+      row.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          setSelected(row);
+        }
+      });
+    });
+
+    const listbox = document.querySelector('.inventory-list');
+    listbox?.addEventListener('keydown', (event) => {
+      if (!rows.length) return;
+      const currentIndex = rows.findIndex((row) => row.classList.contains('is-selected'));
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        const next = rows[Math.min(currentIndex + 1, rows.length - 1)];
+        next?.focus();
+        setSelected(next);
+      }
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        const prev = rows[Math.max(currentIndex - 1, 0)];
+        prev?.focus();
+        setSelected(prev);
+      }
+    });
+  </script>
+)}

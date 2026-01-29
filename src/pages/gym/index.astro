@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const workouts = await getCollection('workouts');
-const categories = ['Roleplay reps', 'Combat fundamentals', 'Spellcasting clarity', 'Table teamwork'];
+const categories = ['Table teamwork', 'Roleplay reps', 'Combat fundamentals', 'Spellcasting clarity'];
 const grouped = await Promise.all(
   categories.map(async (category) => {
     const entries = workouts.filter((workout) => workout.data.category === category);
@@ -20,8 +20,8 @@ const grouped = await Promise.all(
     <div class="container">
       <h1>Player's Gym</h1>
       <p class="muted">
-        Welcome to the micro-workout room. Pick a 5–10 minute drill, stretch your creativity,
-        and head back to the table with fresh energy.
+        Five minutes here pays dividends at the table. 
+        Choose a quick drill, warm up your imagination, and return to play more decisive, more immersed, and more engaged.
       </p>
       {grouped.map((group) => (
         <section style="margin-top:2rem;">
@@ -46,4 +46,3 @@ const grouped = await Promise.all(
     color: var(--muted);
   }
 </style>
-

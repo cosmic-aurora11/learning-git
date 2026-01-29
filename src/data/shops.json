@@ -1,0 +1,91 @@
+[
+  {
+    "name": "Wondrous Wares & Whimsies",
+    "slug": "gilded-anvil",
+    "isOpen": true,
+    "location": "Sword Coast, Traveling Merchant",
+    "flavor": "A merchant who travels across the Sword Coast, selling wondrous wares and whimsies.",
+    "inventory": [
+      {
+        "name": "Anvil-Wrought Shortsword",
+        "description": "Balanced steel with a rune-stamped pommel for better grip.",
+        "cost": "85 gp",
+        "image": "/images/characters/placeholder.svg",
+        "rarity": "Common",
+        "tags": ["Weapon", "Martial"]
+      },
+      {
+        "name": "Bellowsmith's Tongs",
+        "description": "Heatproof tongs that grant advantage on smithing checks.",
+        "cost": "40 gp",
+        "image": "/images/characters/placeholder.svg",
+        "rarity": "Uncommon",
+        "tags": ["Tool", "Craft"]
+      },
+      {
+        "name": "Crucible Buckler",
+        "description": "Small shield etched with emberproof lacquer.",
+        "cost": "120 gp",
+        "image": "/images/characters/placeholder.svg",
+        "rarity": "Uncommon",
+        "tags": ["Armor"]
+      },
+      {
+        "name": "Smith's Ember Kit",
+        "description": "Charcoal, flux, and calming salts for long forge nights.",
+        "cost": "18 gp",
+        "image": "/images/characters/placeholder.svg",
+        "tags": ["Supply"]
+      }
+    ]
+  },
+  {
+    "name": "Barthen's Provisions",
+    "slug": "Barthen's Provisions",
+    "isOpen": false,
+    "location": "Sword Coast, Phandalin",
+    "flavor": "Bart's all-purpose store of supplies and bargains.",
+    "inventory": [
+      {
+        "name": "Lantern of Gentle Dusk",
+        "description": "Soft light reveals hidden runes without alarming creatures.",
+        "cost": "95 gp",
+        "image": "/images/characters/placeholder.svg",
+        "rarity": "Uncommon",
+        "tags": ["Light", "Utility"]
+      },
+      {
+        "name": "Whisper Vial",
+        "description": "Stores one whispered message for later playback.",
+        "cost": "60 gp",
+        "image": "/images/characters/placeholder.svg",
+        "rarity": "Common",
+        "tags": ["Magic", "Utility"]
+      },
+      {
+        "name": "Moonthread Cloak",
+        "description": "Silvery cloak that grants advantage on stealth in dim light.",
+        "cost": "210 gp",
+        "image": "/images/characters/placeholder.svg",
+        "rarity": "Rare",
+        "tags": ["Apparel", "Stealth"]
+      },
+      {
+        "name": "Cartographer's Dream Ink",
+        "description": "Ink that reveals hidden roads on any map for one hour.",
+        "cost": "75 gp",
+        "image": "/images/characters/placeholder.svg",
+        "rarity": "Uncommon",
+        "tags": ["Consumable"]
+      },
+      {
+        "name": "Seafarer's Star-Compass",
+        "description": "Always points toward the nearest coastline.",
+        "cost": "150 gp",
+        "image": "/images/characters/placeholder.svg",
+        "rarity": "Uncommon",
+        "tags": ["Navigation"]
+      }
+    ]
+  }
+]

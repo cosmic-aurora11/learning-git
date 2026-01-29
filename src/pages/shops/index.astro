@@ -1,0 +1,267 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import shops from '../../data/shops.json';
+
+const openShops = shops.filter((shop) => shop.isOpen);
+const openCount = openShops.length;
+const anyOpen = openCount > 0;
+---
+
+<BaseLayout title="Shops | The Arcane Atlas">
+  <section class="section page-hero shops-hero">
+    <div class="container">
+      <h1>Shops</h1>
+      <p class="muted">Browse the guild storefronts and street stalls of the Arcane Atlas.</p>
+      {anyOpen ? (
+        <div class="shops-banner shops-banner--open">
+          Shops are open &mdash; come take a look.
+          <span class="shops-banner__count">({openCount} shop{openCount === 1 ? '' : 's'} open)</span>
+        </div>
+      ) : (
+        <div class="shops-banner">Shops are currently closed &mdash; check back later.</div>
+      )}
+      <div class="shops-layout">
+        <div class="shops-grid">
+          {shops.map((shop) =>
+            shop.isOpen ? (
+              <a class="card shop-card is-open" href={`/shops/${shop.slug}/inventory`}>
+                <div class="shop-card__header">
+                  <h3>{shop.name}</h3>
+                  <span class="status-badge open">Open</span>
+                </div>
+                <p class="shop-location">{shop.location}</p>
+                <p>{shop.flavor}</p>
+              </a>
+            ) : (
+              <button
+                class="card shop-card is-closed"
+                type="button"
+                data-shop-name={shop.name}
+                data-shop-status="closed"
+              >
+                <div class="shop-card__header">
+                  <h3>{shop.name}</h3>
+                  <span class="status-badge closed">Closed</span>
+                </div>
+                <p class="shop-location">{shop.location}</p>
+                <p>{shop.flavor}</p>
+              </button>
+            )
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="closed-shop-modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-backdrop></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="closed-shop-title">
+      <button class="modal-close" type="button" aria-label="Close notice">x</button>
+      <h3 id="closed-shop-title">Shop Status</h3>
+      <p class="modal-message">
+        <span data-shop-name></span> is currently closed. Please come back later!
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const modal = document.getElementById('closed-shop-modal');
+  const modalName = modal?.querySelector('[data-shop-name]');
+  const closeButton = modal?.querySelector('.modal-close');
+  const backdrop = modal?.querySelector('[data-modal-backdrop]');
+  const closedCards = document.querySelectorAll('[data-shop-status="closed"]');
+
+  const openModal = (name) => {
+    if (!modal || !modalName) return;
+    modalName.textContent = name;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    closeButton?.focus();
+  };
+
+  const closeModal = () => {
+    if (!modal) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  };
+
+  closedCards.forEach((card) => {
+    card.addEventListener('click', () => {
+      const name = card.getAttribute('data-shop-name') || 'This shop';
+      openModal(name);
+    });
+  });
+
+  closeButton?.addEventListener('click', closeModal);
+  backdrop?.addEventListener('click', closeModal);
+
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal?.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+</script>
+
+<style>
+  .muted {
+    color: var(--muted);
+  }
+
+  .shops-hero {
+    padding-bottom: var(--space-8);
+  }
+
+  .shops-banner {
+    margin: var(--space-4) 0 var(--space-5);
+    padding: 0.75rem 1.1rem;
+    border-radius: var(--radius-2);
+    border: 1px solid rgba(248, 113, 113, 0.4);
+    background: rgba(248, 113, 113, 0.1);
+    color: #fecaca;
+    font-weight: 600;
+  }
+
+  .shops-banner--open {
+    border-color: rgba(74, 222, 128, 0.4);
+    background: rgba(74, 222, 128, 0.12);
+    color: #86efac;
+    box-shadow: 0 0 18px rgba(74, 222, 128, 0.16);
+  }
+
+  .shops-banner__count {
+    margin-left: 0.4rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .shops-layout {
+    display: grid;
+    gap: var(--space-5);
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .shops-grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .shop-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .shop-card h3 {
+    margin: 0;
+  }
+
+  .shop-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .shop-location {
+    color: var(--muted);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .status-badge {
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .status-badge.open {
+    background: rgba(74, 222, 128, 0.15);
+    color: #86efac;
+    border: 1px solid rgba(74, 222, 128, 0.35);
+  }
+
+  .status-badge.closed {
+    background: rgba(148, 163, 184, 0.12);
+    color: #cbd5f5;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+  }
+
+  .shop-card.is-open {
+    border-color: rgba(74, 222, 128, 0.35);
+  }
+
+  .shop-card.is-closed {
+    opacity: 0.75;
+    border-color: rgba(148, 163, 184, 0.3);
+  }
+
+  .shop-card.is-closed:hover {
+    opacity: 0.92;
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    place-items: center;
+    z-index: 30;
+  }
+
+  .modal.is-open {
+    display: grid;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-card {
+    position: relative;
+    z-index: 1;
+    width: min(480px, 90vw);
+    border-radius: var(--radius-3);
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-5);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: 1px solid var(--border);
+    background: rgba(15, 23, 42, 0.6);
+    color: var(--text);
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .modal-message {
+    color: var(--muted);
+  }
+
+  body.modal-open {
+    overflow: hidden;
+  }
+
+  @media (max-width: 720px) {
+    .shops-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

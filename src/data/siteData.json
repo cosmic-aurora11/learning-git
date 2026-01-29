@@ -10,5 +10,6 @@
   "partyGold": {
     "total": 125,
     "note": "On hand / in stash"
-  }
+  },
+  "submissionFormUrl": "#"
 }

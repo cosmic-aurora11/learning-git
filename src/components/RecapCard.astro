@@ -3,11 +3,6 @@ const { recap } = Astro.props;
 ---
 
 <article class="card">
-  <div class="tag-list">
-    {recap.data.tags.map((tag) => (
-      <span class="chip" key={tag}>{tag}</span>
-    ))}
-  </div>
   <h3>{recap.data.title}</h3>
   <p class="muted">Session {recap.data.sessionNumber} · {recap.data.date}</p>
   <p>{recap.data.summary}</p>

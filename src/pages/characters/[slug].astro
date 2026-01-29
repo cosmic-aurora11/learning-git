@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AbilityGroups from '../../components/AbilityGroups.astro';
+import XpBar from '../../components/XpBar.astro';
 import { getCollection } from 'astro:content';
+
 
 export async function getStaticPaths() {
   const characters = await getCollection('characters');
@@ -11,53 +14,495 @@ export async function getStaticPaths() {
 }
 
 const { character } = Astro.props;
-const { Content } = await character.render();
+const allCharacters = await getCollection('characters');
+const rosterEntries = allCharacters.filter((entry) => entry.slug !== character.slug);
+const getInitials = (value = '') =>
+  value
+    .split(' ')
+    .filter(Boolean)
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+const identityLine = character.data.blurb ?? '';
+const proficiencies = character.data.proficiencies ?? [];
+const abilities = character.data.abilities ?? [];
+const spells = character.data.spells ?? null;
+const magicItems = character.data.magicItems ?? [];
+const acValue = character.data.ac;
+const hpValue = character.data.hp;
+const acDisplay = Number.isFinite(acValue) ? acValue : '—';
+const hpDisplay = Number.isFinite(hpValue) ? hpValue : '—';
+const xpPips = character.data.xpPips ?? 0;
+
 ---
 
 <BaseLayout title={`${character.data.name} | The Arcane Atlas`}>
-  <section class="section page-hero">
+  <section class="section page-hero folio-hero">
     <div class="container">
-      <div class="grid grid-2 character-header">
-        <div class="card">
+      <div class="folio-hero__layout">
+        <div class="folio-panel">
+          <p class="folio-label">Character Folio</p>
           <h1>{character.data.name}</h1>
-          <p class="muted">{character.data.race} · {character.data.class}</p>
-          {character.data.playerName && <p>Player: {character.data.playerName}</p>}
-          {character.data.tags && (
-            <div class="tag-list">
-              {character.data.tags.map((tag) => (
-                <span class="chip" key={tag}>{tag}</span>
-              ))}
-            </div>
-          )}
-          {character.data.sheetUrl && (
-            <a class="button" href={character.data.sheetUrl} target="_blank" rel="noreferrer">
-              Character Sheet
-            </a>
-          )}
+          <p class="folio-subtitle">{character.data.race} / {character.data.class}</p>
+          <p class="folio-stats">
+            <span class="folio-stat">
+              <span class="folio-stat__label">AC:</span>
+              <span class="folio-stat__value">{acDisplay}</span>
+            </span>
+            <span class="folio-stat">
+              <span class="folio-stat__label">HP:</span>
+              <span class="folio-stat__value">{hpDisplay}</span>
+            </span>
+          </p>
+          <p class="folio-identity">
+            {identityLine || 'Not recorded yet.'}
+          </p>
+          <div class="folio-proficiencies">
+            <span class="folio-proficiencies__label">Proficiencies:</span>
+            <span class="folio-proficiencies__value">
+              {proficiencies.length > 0 ? proficiencies.join(', ') : '—'}
+            </span>
+          </div>
+          <div class="folio-actions">
+            {character.data.sheetUrl && (
+              <a class="button primary" href={character.data.sheetUrl} target="_blank" rel="noreferrer">
+                Character Sheet
+              </a>
+            )}
+            <button class="button" type="button" id="submit-update">Submit an Update</button>
+          </div>
+          <div class="folio-xp">
+            <XpBar xpPips={xpPips} />
+          </div>
         </div>
-        <div>
+        <div class="portrait-frame">
           <img src={character.data.portrait} alt={`Portrait of ${character.data.name}`} />
         </div>
       </div>
-      <div class="section">
-        <Content />
+    </div>
+  </section>
+
+  <section class="section folio-section folio-section--tight">
+    <div class="container">
+      <div class="folio-content">
+        <h2>Abilities & Spells</h2>
+        <p class="folio-muted">Quick-reference actions, passives, and spell notes.</p>
+        <AbilityGroups abilities={abilities} spells={spells} magicItems={magicItems} />
       </div>
     </div>
   </section>
-</BaseLayout>
 
+  <section class="section folio-section folio-section--roster">
+    <div class="container">
+      <div class="folio-content">
+        <h2>Party Roster</h2>
+        <p class="folio-muted">Jump to another character.</p>
+        <div class="roster-grid">
+          {rosterEntries.map((entry) => (
+            <a class="roster-card" href={`/characters/${entry.slug}`}>
+              <div class="roster-card__media">
+                {entry.data.portrait ? (
+                  <img src={entry.data.portrait} alt={`Portrait of ${entry.data.name}`} />
+                ) : (
+                  <span class="roster-card__initials">{getInitials(entry.data.name)}</span>
+                )}
+              </div>
+              <div class="roster-card__body">
+                <h3>{entry.data.name}</h3>
+                <p>{entry.data.class}</p>
+              </div>
+              <span class="roster-card__tag">View</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="submit-update-modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-backdrop></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submit-update-title">
+      <button class="modal-close" type="button" aria-label="Close notice">x</button>
+      <h3 id="submit-update-title">Updates</h3>
+      <p class="modal-message">To update your page, send me a text or an email. Updates will occur within 24 hours.</p>
+    </div>
+  </div>
+
+  
+
+</BaseLayout>
+<script is:inline>
+  const trigger = document.getElementById('submit-update');
+  const modal = document.getElementById('submit-update-modal');
+  const closeButton = modal?.querySelector('.modal-close');
+  const backdrop = modal?.querySelector('[data-modal-backdrop]');
+  let lastFocused = null;
+
+  const openModal = () => {
+    if (!modal) return;
+    console.log('Submit update clicked');
+    lastFocused = document.activeElement;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    closeButton?.focus();
+  };
+
+  const closeModal = () => {
+    if (!modal) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+    if (lastFocused instanceof HTMLElement) {
+      lastFocused.focus();
+    }
+  };
+
+  trigger?.addEventListener('click', (event) => {
+    event.preventDefault();
+    openModal();
+  });
+
+  closeButton?.addEventListener('click', closeModal);
+  backdrop?.addEventListener('click', closeModal);
+
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal?.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+</script>
 <style>
-  img {
-    border-radius: 18px;
-    border: 1px solid var(--border);
-    background: var(--surface-alt);
+  .folio-hero {
+    padding-top: var(--space-9);
+    padding-bottom: var(--space-8);
   }
 
-  .muted {
+  .folio-hero__layout {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .folio-panel {
+    padding: var(--space-6);
+    border-radius: var(--radius-3);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(15, 23, 42, 0.4);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .folio-label {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .folio-panel h1 {
+    margin: 0;
+    font-size: clamp(2.6rem, 3.6vw, 3.4rem);
+  }
+
+  .folio-subtitle {
+    margin: 0;
     color: var(--muted);
   }
 
-  .character-header .button {
-    margin-top: 0.75rem;
+  .folio-stats {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    font-size: var(--text-base);
+  }
+
+  .folio-stat {
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: baseline;
+  }
+
+  .folio-stat__label {
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: var(--text-xs);
+  }
+
+  .folio-stat__value {
+    color: var(--text);
+    font-weight: 600;
+    font-size: var(--text-lg);
+  }
+
+  .folio-identity {
+    margin: 0 0 var(--space-2);
+    max-width: 48ch;
+  }
+
+  .folio-proficiencies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.6rem;
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-sm);
+    align-items: baseline;
+    line-height: 1.4;
+  }
+
+  .folio-proficiencies__label {
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: var(--text-xs);
+  }
+
+  .folio-proficiencies__value {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .folio-xp {
+    width: 100%;
+    border-top: 1px solid rgba(148, 163, 184, 0.18);
+    padding-top: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  .folio-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .portrait-frame {
+    aspect-ratio: 3 / 4;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    overflow: hidden;
+  }
+
+  .portrait-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .folio-section {
+    padding-top: var(--space-7);
+    padding-bottom: var(--space-7);
+  }
+
+  .folio-section--tight {
+    padding-top: var(--space-2);
+  }
+
+  .folio-section--roster {
+    padding-top: var(--space-5);
+  }
+
+  .folio-section + .folio-section {
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+  }
+
+  .folio-content {
+    max-width: 70ch;
+  }
+
+  .folio-content h2 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .folio-muted {
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .roster-grid {
+    margin-top: var(--space-4);
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  }
+
+  .roster-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-3);
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(15, 23, 42, 0.45);
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.2);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  .roster-card:hover,
+  .roster-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: 0 12px 28px rgba(2, 6, 23, 0.35);
+    outline: none;
+  }
+
+  .roster-card__media {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .roster-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .roster-card__initials {
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .roster-card__body h3 {
+    margin: 0;
+    font-size: var(--text-base);
+  }
+
+  .roster-card__body p {
+    margin: 0.25rem 0 0;
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .roster-card__tag {
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+  }
+
+  .folio-placeholder {
+    color: var(--muted);
+    font-size: var(--text-sm);
+    margin-top: var(--space-3);
+  }
+
+  .folio-list {
+    margin: var(--space-3) 0 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .folio-entries {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+
+  .folio-entry p {
+    margin: 0;
+  }
+
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    place-items: center;
+    z-index: 40;
+  }
+
+  .modal.is-open {
+    display: grid;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-card {
+    position: relative;
+    z-index: 1;
+    width: min(480px, 90vw);
+    border-radius: var(--radius-3);
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-5);
+    text-align: left;
+  }
+
+  .modal-message {
+    color: var(--muted);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: 1px solid var(--border);
+    background: rgba(15, 23, 42, 0.6);
+    color: var(--text);
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  body.modal-open {
+    overflow: hidden;
+  }
+
+  @media (min-width: 900px) {
+    .folio-hero__layout {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    }
   }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

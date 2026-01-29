@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Boots of Walken",
+    "price": "Negotiable",
+    "type": "Clothing",
+    "rarity": "Uncommon",
+    "description": "These magnificent leather boots give you advantage on Charisma (Performance) checks provided you speak in a… halting, uneven cadence with an unpredictable… emphasis on, random words. \n\n(2 charges)"
+  },
+  
+  {
+    "name": "Hat of Butterflies",
+    "price": "5 gp",
+    "type": "Clothing",
+    "rarity": "Uncommon",
+    "description": "Can emit a flutter of butterflies. \n\n (3x a day)"
+  },
+  {
+    "name": "Toad in a Jar",
+    "price": "5 gp",
+    "type": "Supply",
+    "rarity": "Unknown",
+    "description": "Seems like an ordinary toad in a jar."
+  },
+  {
+    "name": "Fake Doorknob",
+    "price": "10 gp",
+    "type": "Supply",
+    "rarity": "Uncommon",
+    "description": "A magical doorknob that, when pressed against a flat surface, creates a door. The door looks to be the style of other nearby doors. Opening the door reveals the wall behind it that it was placed on, leading nowhere, for it is a fake door."
+  },
+  {
+    "name": "Whistle of Duck Summoning",
+    "price": "Negotiable",
+    "type": "Supply",
+    "rarity": "Unknown",
+    "description": "Summons a regular duck. It is always the same duck."
+  },
+  {
+    "name": "Book of Monster Essence",
+    "price": "Negotiable",
+    "type": "Book",
+    "rarity": "Uncommon",
+    "description": "A book detailing how to extract monster essence for item crafting use."
+  }
+  
+]

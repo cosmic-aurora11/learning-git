@@ -2,10 +2,10 @@
 name: "Eris"
 race: "Dragonborn"
 class: "Cleric"
-ac: 18
-hp: 32
+ac: 15
+hp: 23
 xpPips: 2
-proficiencies: ["Athletics", "Insight", "Religion", "Intimidation"]
+proficiencies: ["Athletics", "Insight", "Intimidation", "Religion"]
 abilities:
   - name: "Breath Weapon"
     group: "Combat Actions"

@@ -1,0 +1,313 @@
+---
+import AbilityCard from './AbilityCard.astro';
+
+const { abilities = [], spells = null, magicItems = [] } = Astro.props;
+
+const standardGroups = [
+  'Combat Actions',
+  'Bonus Actions & Reactions',
+  'Resources & Limited Uses',
+  'Passives & Always-On Traits',
+  'Spells (Reference)',
+  'Magic Items & Item Abilities'
+];
+
+const orderEntries = (entries = []) =>
+  entries
+    .map((entry, index) => ({ ...entry, __index: index }))
+    .sort((a, b) => {
+      const aHas = Number.isFinite(a.order);
+      const bHas = Number.isFinite(b.order);
+      if (aHas && bHas) return a.order - b.order;
+      if (aHas) return -1;
+      if (bHas) return 1;
+      return a.__index - b.__index;
+    })
+    .map(({ __index, ...entry }) => entry);
+
+const abilityEntries = Array.isArray(abilities) ? abilities : [];
+const magicEntries = Array.isArray(magicItems)
+  ? magicItems.map((item) => ({
+      ...item,
+      group: item.group ?? 'Magic Items & Item Abilities'
+    }))
+  : [];
+
+const grouped = new Map();
+standardGroups.forEach((group) => grouped.set(group, []));
+
+[...abilityEntries, ...magicEntries].forEach((entry) => {
+  const group = entry.group ?? 'Combat Actions';
+  if (!grouped.has(group)) {
+    grouped.set(group, []);
+  }
+  grouped.get(group).push(entry);
+});
+
+const spellSections = spells?.sections ?? [];
+const hasSpells = spellSections.some((section) => (section.items ?? []).length > 0);
+const hasAbilityGroups = [...grouped.values()].some((entries) => entries.length > 0);
+const hasContent = hasAbilityGroups || hasSpells;
+const spellsStats = spells
+  ? {
+      ability: spells.ability,
+      saveDC: spells.saveDC,
+      attackBonus: spells.attackBonus
+    }
+  : null;
+---
+
+<div class="ability-groups">
+  {!hasContent ? (
+    <p class="ability-empty">Not recorded yet.</p>
+  ) : (
+    <>
+      {[...grouped.entries()]
+        .filter(([group, entries]) => entries.length > 0 && group !== 'Spells (Reference)')
+        .map(([group, entries]) => (
+          <section class="ability-group">
+            <header class="ability-group__header">
+              <h3>{group}</h3>
+            </header>
+            <div class="ability-group__grid">
+              {orderEntries(entries).map((entry) => (
+                <AbilityCard
+                  name={entry.name}
+                  summary={entry.summary}
+                  details={entry.details}
+                  tags={entry.tags}
+                  uses={entry.uses}
+                  recharge={entry.recharge}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
+
+      {hasSpells && (
+        <section class="ability-group ability-group--spells">
+          <header class="ability-group__header">
+            <h3>Spells (Reference)</h3>
+          </header>
+          {(spellsStats?.ability || spellsStats?.saveDC || spellsStats?.attackBonus) && (
+            <div class="spell-stats">
+              {spellsStats?.ability && <span>Ability: {spellsStats.ability}</span>}
+              {Number.isFinite(spellsStats?.saveDC) && <span>Save DC: {spellsStats.saveDC}</span>}
+              {Number.isFinite(spellsStats?.attackBonus) && (
+                <span>Attack Bonus: +{spellsStats.attackBonus}</span>
+              )}
+            </div>
+          )}
+          <div class="spell-groups">
+            {spellSections
+              .filter((section) => (section.items ?? []).length > 0)
+              .map((section) => {
+                const panelId = `spell-section-${Math.random().toString(36).slice(2, 9)}`;
+                return (
+                  <div class="spell-group" data-accordion-card>
+                    <button
+                      class="spell-group__toggle"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls={panelId}
+                      data-accordion-toggle
+                    >
+                      <span>{section.label}</span>
+                      <span class="spell-group__chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div
+                      class="spell-group__panel"
+                      id={panelId}
+                      role="region"
+                      aria-hidden="true"
+                      data-accordion-panel
+                    >
+                      <div class="ability-group__grid">
+                        {orderEntries(section.items ?? []).map((spell) => (
+                          <AbilityCard
+                            name={spell.name}
+                            summary={spell.summary}
+                            details={spell.details}
+                            tags={spell.tags}
+                            uses={spell.uses}
+                            recharge={spell.recharge}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </section>
+      )}
+    </>
+  )}
+
+  <script is:inline>
+    const root = document.currentScript?.parentElement;
+    if (root) {
+      const updatePanel = (card, panel, isOpen) => {
+        if (!panel) return;
+        if (isOpen) {
+          panel.style.overflow = 'hidden';
+          panel.style.maxHeight = `${panel.scrollHeight}px`;
+        } else {
+          panel.style.overflow = 'hidden';
+          panel.style.maxHeight = `${panel.scrollHeight}px`;
+          requestAnimationFrame(() => {
+            panel.style.maxHeight = '0px';
+          });
+        }
+      };
+      const updateAncestors = (panel) => {
+        let parentPanel = panel?.parentElement?.closest('[data-accordion-panel]');
+        while (parentPanel) {
+          parentPanel.style.maxHeight = `${parentPanel.scrollHeight}px`;
+          parentPanel = parentPanel.parentElement?.closest('[data-accordion-panel]');
+        }
+      };
+
+      const toggles = root.querySelectorAll('[data-accordion-toggle]');
+      toggles.forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          const card = toggle.closest('[data-accordion-card]');
+          const panel = card?.querySelector('[data-accordion-panel]');
+          if (!card || !panel) return;
+          const isOpen = card.classList.toggle('is-open');
+          toggle.setAttribute('aria-expanded', String(isOpen));
+          panel.setAttribute('aria-hidden', String(!isOpen));
+          updatePanel(card, panel, isOpen);
+          updateAncestors(panel);
+        });
+      });
+
+      const panels = root.querySelectorAll('[data-accordion-panel]');
+      panels.forEach((panel) => {
+        panel.addEventListener('transitionend', (event) => {
+          if (event.propertyName !== 'max-height') return;
+          const card = panel.closest('[data-accordion-card]');
+          const isOpen = card?.classList.contains('is-open');
+          if (isOpen) {
+            panel.style.maxHeight = 'none';
+            panel.style.overflow = 'visible';
+          }
+        });
+      });
+
+      window.addEventListener('resize', () => {
+        const openCards = root.querySelectorAll('[data-accordion-card].is-open');
+        openCards.forEach((card) => {
+          const panel = card.querySelector('[data-accordion-panel]');
+          if (!panel) return;
+          panel.style.maxHeight = `${panel.scrollHeight}px`;
+          panel.style.overflow = 'hidden';
+          requestAnimationFrame(() => {
+            panel.style.maxHeight = 'none';
+            panel.style.overflow = 'visible';
+          });
+        });
+      });
+    }
+  </script>
+</div>
+
+<style>
+  .ability-groups {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .ability-empty {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .ability-group {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .ability-group__header h3 {
+    margin: 0;
+    font-size: var(--text-xl);
+  }
+
+  .ability-group__grid {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .ability-group--spells {
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+    padding-top: var(--space-5);
+  }
+
+  .spell-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem 1.4rem;
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  .spell-groups {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .spell-group {
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(15, 23, 42, 0.35);
+    overflow: visible;
+  }
+
+  .spell-group__toggle {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: inherit;
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--text-base);
+    cursor: pointer;
+  }
+
+  .spell-group__toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 12px;
+  }
+
+  .spell-group__chevron {
+    color: var(--muted);
+    transition: transform 200ms ease;
+  }
+
+  .spell-group.is-open .spell-group__chevron {
+    transform: rotate(180deg);
+  }
+
+  .spell-group__panel {
+    padding: 0 var(--space-4);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 220ms ease, opacity 220ms ease;
+  }
+
+  .spell-group.is-open .spell-group__panel {
+    opacity: 1;
+    padding-bottom: var(--space-5);
+  }
+
+  @media (min-width: 820px) {
+    .ability-group__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

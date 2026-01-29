@@ -1,12 +1,12 @@
 ---
 import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
-import SearchBar from '../components/SearchBar.astro';
 
 const { title = 'Campaign Hub', description = '' } = Astro.props;
 const pathname = Astro.url.pathname;
 const navItems = [
   { href: '/characters', label: 'Characters' },
+  { href: '/shops', label: 'Shops' },
   { href: '/recaps', label: 'Recaps' },
   { href: '/lore', label: 'Lore' },
   { href: '/gym', label: "Player's Gym" }
@@ -14,6 +14,8 @@ const navItems = [
 const navSplitIndex = Math.ceil(navItems.length / 2);
 const leftNavItems = navItems.slice(0, navSplitIndex);
 const rightNavItems = navItems.slice(navSplitIndex);
+const loreModalId = 'lore-wip-modal';
+const loreTitleId = 'lore-wip-title';
 ---
 
 <!doctype html>
@@ -34,12 +36,26 @@ const rightNavItems = navItems.slice(navSplitIndex);
           <nav class="site-nav site-nav--left" aria-label="Primary">
             <ul>
               {leftNavItems.map((item) => {
-                const isActive = item.href === '/'
+                const isLore = item.label === 'Lore';
+                const isActive = !isLore && (item.href === '/'
                   ? pathname === '/'
-                  : pathname.startsWith(item.href);
+                  : pathname.startsWith(item.href));
                 return (
                   <li>
-                    <a href={item.href} class={isActive ? 'active' : ''}>{item.label}</a>
+                    {item.label === 'Lore' ? (
+                      <button
+                        class={`nav-wip ${isActive ? 'active' : ''}`}
+                        type="button"
+                        data-lore-trigger
+                        aria-haspopup="dialog"
+                        aria-controls={loreModalId}
+                      >
+                        <span>{item.label}</span>
+                        <span class="nav-wip__chip" aria-hidden="true">🛠️</span>
+                      </button>
+                    ) : (
+                      <a href={item.href} class={isActive ? 'active' : ''}>{item.label}</a>
+                    )}
                   </li>
                 );
               })}
@@ -51,12 +67,26 @@ const rightNavItems = navItems.slice(navSplitIndex);
           <nav class="site-nav site-nav--right" aria-label="Secondary">
             <ul>
               {rightNavItems.map((item) => {
-                const isActive = item.href === '/'
+                const isLore = item.label === 'Lore';
+                const isActive = !isLore && (item.href === '/'
                   ? pathname === '/'
-                  : pathname.startsWith(item.href);
+                  : pathname.startsWith(item.href));
                 return (
                   <li>
-                    <a href={item.href} class={isActive ? 'active' : ''}>{item.label}</a>
+                    {item.label === 'Lore' ? (
+                      <button
+                        class={`nav-wip ${isActive ? 'active' : ''}`}
+                        type="button"
+                        data-lore-trigger
+                        aria-haspopup="dialog"
+                        aria-controls={loreModalId}
+                      >
+                        <span>{item.label}</span>
+                        <span class="nav-wip__chip" aria-hidden="true">🛠️</span>
+                      </button>
+                    ) : (
+                      <a href={item.href} class={isActive ? 'active' : ''}>{item.label}</a>
+                    )}
                   </li>
                 );
               })}
@@ -66,12 +96,26 @@ const rightNavItems = navItems.slice(navSplitIndex);
         <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile">
           <ul>
             {navItems.map((item) => {
-              const isActive = item.href === '/'
+              const isLore = item.label === 'Lore';
+              const isActive = !isLore && (item.href === '/'
                 ? pathname === '/'
-                : pathname.startsWith(item.href);
+                : pathname.startsWith(item.href));
               return (
                 <li>
-                  <a href={item.href} class={isActive ? 'active' : ''}>{item.label}</a>
+                  {item.label === 'Lore' ? (
+                    <button
+                      class={`nav-wip ${isActive ? 'active' : ''}`}
+                      type="button"
+                      data-lore-trigger
+                      aria-haspopup="dialog"
+                      aria-controls={loreModalId}
+                    >
+                      <span>{item.label}</span>
+                      <span class="nav-wip__chip" aria-hidden="true">🛠️</span>
+                    </button>
+                  ) : (
+                    <a href={item.href} class={isActive ? 'active' : ''}>{item.label}</a>
+                  )}
                 </li>
               );
             })}
@@ -87,11 +131,20 @@ const rightNavItems = navItems.slice(navSplitIndex);
         <p>Built for fast updates, quick reads, and a little The Arcane Atlas charm.</p>
         <div class="footer-divider" role="presentation"></div>
         <div class="footer-tools">
-          <SearchBar />
           <ThemeToggle />
         </div>
       </div>
     </footer>
+
+    <div id={loreModalId} class="modal" aria-hidden="true">
+      <div class="modal-backdrop" data-lore-backdrop></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby={loreTitleId}>
+        <button class="modal-close" type="button" aria-label="Close notice">x</button>
+        <h3 id={loreTitleId}>Lore? Soon.</h3>
+        <p class="modal-message" data-lore-message></p>
+        <p class="modal-subtext">(Translation: Lore section currently in progress.)</p>
+      </div>
+    </div>
     <script>
       const menuToggle = document.querySelector('.menu-toggle');
       const mobileNav = document.getElementById('mobile-nav');
@@ -102,6 +155,179 @@ const rightNavItems = navItems.slice(navSplitIndex);
           menuToggle.setAttribute('aria-expanded', String(isOpen));
         });
       }
+
+      const loreModal = document.getElementById('lore-wip-modal');
+      const loreTriggers = document.querySelectorAll('[data-lore-trigger]');
+      const loreCloseButton = loreModal?.querySelector('.modal-close');
+      const loreBackdrop = loreModal?.querySelector('[data-lore-backdrop]');
+      const loreMessage = loreModal?.querySelector('[data-lore-message]');
+      const loreMessages = [
+        'The scribes are still arguing about canon. Check back later.',
+        'The lore goblins are polishing the footnotes. Not ready yet.',
+        'Currently fermenting in a narrative barrel. Please return later.'
+      ];
+      let loreLastFocused = null;
+
+      const openLoreModal = () => {
+        if (!loreModal) return;
+        loreLastFocused = document.activeElement;
+        const randomIndex = Math.floor(Math.random() * loreMessages.length);
+        if (loreMessage) {
+          loreMessage.textContent = loreMessages[randomIndex];
+        }
+        loreModal.classList.add('is-open');
+        loreModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        loreCloseButton?.focus();
+      };
+
+      const closeLoreModal = () => {
+        if (!loreModal) return;
+        loreModal.classList.remove('is-open');
+        loreModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        if (loreLastFocused instanceof HTMLElement) {
+          loreLastFocused.focus();
+        }
+      };
+
+      loreTriggers.forEach((trigger) => {
+        trigger.addEventListener('click', (event) => {
+          event.preventDefault();
+          openLoreModal();
+        });
+      });
+
+      loreCloseButton?.addEventListener('click', closeLoreModal);
+      loreBackdrop?.addEventListener('click', closeLoreModal);
+
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && loreModal?.classList.contains('is-open')) {
+          closeLoreModal();
+        }
+      });
     </script>
   </body>
 </html>
+
+<style>
+  .nav-wip {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font: inherit;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    position: relative;
+    padding-bottom: 0.2rem;
+  }
+
+  .nav-wip::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.2rem;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 999px;
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+
+  .nav-wip__chip {
+    font-size: 0.75rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(15, 23, 42, 0.5);
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .nav-wip:hover,
+  .nav-wip:focus-visible {
+    color: var(--text);
+  }
+
+  .nav-wip:hover::after,
+  .nav-wip:focus-visible::after {
+    opacity: 0.9;
+  }
+
+  .nav-wip:hover .nav-wip__chip,
+  .nav-wip:focus-visible .nav-wip__chip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    place-items: center;
+    z-index: 40;
+  }
+
+  .modal.is-open {
+    display: grid;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-card {
+    position: relative;
+    z-index: 1;
+    width: min(520px, 92vw);
+    border-radius: var(--radius-3);
+    background:
+      radial-gradient(260px circle at 10% -20%, rgba(127, 191, 224, 0.18), transparent 60%),
+      var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-5);
+    text-align: left;
+  }
+
+  .modal-card h3 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-xl);
+  }
+
+  .modal-message {
+    color: var(--text);
+    margin: 0 0 var(--space-2);
+  }
+
+  .modal-subtext {
+    color: var(--muted);
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: 1px solid var(--border);
+    background: rgba(15, 23, 42, 0.6);
+    color: var(--text);
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  body.modal-open {
+    overflow: hidden;
+  }
+</style>

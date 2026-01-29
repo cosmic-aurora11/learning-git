@@ -1,0 +1,130 @@
+---
+const { id, triggerLabel, message, title = 'Update notice' } = Astro.props;
+const modalId = `${id}-modal`;
+const titleId = `${id}-title`;
+---
+
+<div class="info-modal">
+  <button
+    class="button"
+    type="button"
+    data-modal-trigger={id}
+    aria-haspopup="dialog"
+    aria-controls={modalId}
+  >
+    {triggerLabel}
+  </button>
+
+  <div id={modalId} class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-backdrop></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <button class="modal-close" type="button" aria-label="Close notice">x</button>
+      <h3 id={titleId}>{title}</h3>
+      <p class="modal-message">{message}</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modalId = "${modalId}";
+  const trigger = document.querySelector(`[data-modal-trigger="${id}"]`);
+  const modal = document.getElementById(modalId);
+  const closeButton = modal?.querySelector('.modal-close');
+  const backdrop = modal?.querySelector('[data-modal-backdrop]');
+  let lastFocused = null;
+
+  const openModal = () => {
+    if (!modal) return;
+    lastFocused = document.activeElement;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    closeButton?.focus();
+  };
+
+  const closeModal = () => {
+    if (!modal) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+    if (lastFocused instanceof HTMLElement) {
+      lastFocused.focus();
+    }
+  };
+
+  trigger?.addEventListener('click', (event) => {
+    event.preventDefault();
+    openModal();
+  });
+
+  closeButton?.addEventListener('click', closeModal);
+  backdrop?.addEventListener('click', closeModal);
+
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal?.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+</script>
+
+<style>
+  .modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    place-items: center;
+    z-index: 40;
+  }
+
+  .modal.is-open {
+    display: grid;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-card {
+    position: relative;
+    z-index: 1;
+    width: min(520px, 92vw);
+    border-radius: var(--radius-3);
+    background:
+      radial-gradient(260px circle at 10% -20%, rgba(127, 191, 224, 0.18), transparent 60%),
+      var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-5);
+    text-align: left;
+  }
+
+  .modal-card h3 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-xl);
+  }
+
+  .modal-message {
+    color: var(--text);
+    margin: 0;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: 1px solid var(--border);
+    background: rgba(15, 23, 42, 0.6);
+    color: var(--text);
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  :global(body.modal-open) {
+    overflow: hidden;
+  }
+</style>

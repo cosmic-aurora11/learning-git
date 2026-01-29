@@ -1,0 +1,112 @@
+---
+const {
+  submission,
+  showType = false,
+  showCharacter = false,
+  characterName = '',
+  characterSlug = '',
+  index = 0
+} = Astro.props;
+
+const typeLabel = submission?.type
+  ? submission.type.replace(/(^\w|-\w)/g, (match) => match.replace('-', ' ').toUpperCase())
+  : '';
+
+const rawSession = submission?.session ? String(submission.session) : '';
+const sessionLabel = rawSession
+  ? /session/i.test(rawSession)
+    ? rawSession
+    : `Session ${rawSession}`
+  : '';
+
+const metaParts = [submission?.date, sessionLabel].filter(Boolean);
+const tagList = Array.isArray(submission?.tags) ? submission.tags : [];
+const searchText = [
+  submission?.title,
+  submission?.text,
+  submission?.type,
+  characterName,
+  ...tagList
+]
+  .filter(Boolean)
+  .join(' ')
+  .toLowerCase();
+---
+
+<article
+  class="card submission-card"
+  data-submission-card
+  data-type={submission?.type}
+  data-character={characterSlug}
+  data-search={searchText}
+  data-index={index}
+>
+  <div class="submission-card__header">
+    <div class="submission-meta">
+      {metaParts.length > 0 && <span>{metaParts.join(' · ')}</span>}
+    </div>
+    {showType && submission?.type && (
+      <span class="chip submission-type">{typeLabel}</span>
+    )}
+  </div>
+  <h3>{submission?.title}</h3>
+  <p class="muted">{submission?.text}</p>
+  {(showCharacter || tagList.length > 0) && (
+    <div class="submission-tags">
+      {showCharacter && characterName && (
+        <span class="chip submission-character">{characterName}</span>
+      )}
+      {tagList.map((tag) => (
+        <span class="chip submission-tag" key={tag}>{tag}</span>
+      ))}
+    </div>
+  )}
+</article>
+
+<style>
+  .submission-card {
+    padding: var(--space-4);
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .submission-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .submission-meta {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .submission-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .submission-type {
+    background: rgba(129, 140, 248, 0.12);
+    color: #c7d2fe;
+    border-color: rgba(129, 140, 248, 0.35);
+  }
+
+  .submission-character {
+    background: rgba(56, 189, 248, 0.12);
+    color: #bae6fd;
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+
+  .submission-tag {
+    color: var(--muted);
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+</style>

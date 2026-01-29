@@ -4,4 +4,4 @@ category: "Combat fundamentals"
 summary: "A quick drill for action economy and positioning."
 ---
 
-In your next fight, call out three options: one aggressive, one defensive, one tactical. Choose based on the team's needs, not just damage.
+Think about how you would play out the following options in your next fight: one aggressive, one defensive, one tactical. When playing, choose based on the team's needs, not just damage.
