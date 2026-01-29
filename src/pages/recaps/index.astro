@@ -134,6 +134,7 @@ const useTimelineLayout = true;
     gap: 2rem;
     position: relative;
     padding-left: 1.5rem;
+    overflow: visible;
   }
 
   .timeline::before {
@@ -145,12 +146,14 @@ const useTimelineLayout = true;
     width: 2px;
     background: linear-gradient(180deg, transparent, var(--accent), transparent);
     opacity: 0.5;
+    z-index: 0;
   }
 
   .timeline-item {
     display: block;
     padding-left: 1.5rem;
     position: relative;
+    z-index: 1;
   }
 
   .timeline-item::before {
@@ -164,11 +167,14 @@ const useTimelineLayout = true;
     border-radius: 50%;
     background: var(--accent);
     box-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
+    z-index: 2;
   }
 
   .timeline-content {
     display: grid;
     gap: 0.75rem;
+    position: relative;
+    z-index: 1;
   }
 
   .timeline-label {
@@ -178,18 +184,23 @@ const useTimelineLayout = true;
     letter-spacing: 0.08em;
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 520px) {
     .timeline {
-      padding-left: 0;
+      --timeline-gutter: 22px;
+      padding-left: var(--timeline-gutter);
+      overflow: visible;
     }
 
     .timeline::before {
-      display: none;
+      left: calc(var(--timeline-gutter) / 2);
+    }
+
+    .timeline-item {
+      padding-left: 0;
     }
 
     .timeline-item::before {
-      display: none;
+      left: calc(-1 * var(--timeline-gutter) / 2 - 7px);
     }
   }
 </style>
-

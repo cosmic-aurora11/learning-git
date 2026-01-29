@@ -181,6 +181,8 @@ const anyOpen = openCount > 0;
     font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: 0.08em;
+    white-space: nowrap;
+    flex: 0 0 auto;
   }
 
   .status-badge.open {
@@ -265,6 +267,17 @@ const anyOpen = openCount > 0;
   @media (max-width: 720px) {
     .shops-grid {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .shop-card__header {
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      order: 2;
+      margin-top: 6px;
     }
   }
 </style>
