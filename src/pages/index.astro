@@ -4,11 +4,6 @@ import NextSessionCard from '../components/NextSessionCard.astro';
 import RecapCard from '../components/RecapCard.astro';
 import { getCollection } from 'astro:content';
 
-const isDev = import.meta.env.DEV;
-const loreTeaserHref = isDev ? '/lore' : '/lore-coming-soon';
-const loreTeaserBadge = isDev ? 'Dev preview' : 'Coming soon';
-const loreTeaserCta = isDev ? 'Open Lore' : 'Lore preview';
-
 const recaps = await getCollection('recaps');
 const latestRecap = recaps
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())[0];
@@ -21,25 +16,13 @@ const quickLinks = [
 ];
 ---
 
-<BaseLayout title="The Arcane Atlas | Campaign Hub" description="A fast, modern hub for campaign recaps, lore, and party updates.">
-  <section class="lore-banner">
-    <div class="container lore-banner__inner">
-      <div>
-        <span class="chip">{loreTeaserBadge}</span>
-        <p class="lore-banner__title">Lore is evolving behind the scenes.</p>
-        <p class="lore-banner__copy">
-          Track factions, regions, and mysteries with a dedicated lore atlas.
-        </p>
-      </div>
-      <a class="button primary" href={loreTeaserHref}>{loreTeaserCta}</a>
-    </div>
-  </section>
+<BaseLayout title="The Arcane Atlas | Campaign Hub" description="A fast, modern hub for campaign recaps and party updates.">
   <section class="hero container page-hero">
     <div>
       <h1>The Arcane Atlas: your living campaign map.</h1>
       <p>
-        Keep recaps, lore, and character beats in one sleek, searchable place. Update the world
-        each week without touching layout code.
+        Keep recaps and character beats in one sleek, searchable place. Update the world each week
+        without touching layout code.
       </p>
       <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1.5rem;">
         <a class="button primary" href="/recaps">Read the Latest Recap</a>
