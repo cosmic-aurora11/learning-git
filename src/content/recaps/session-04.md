@@ -23,7 +23,7 @@ The party is currently in <span class="recap-location">Phandalin</span>, having 
 ## 🔍 Learned
 - A <span class="recap-faction">Redbrand</span> "Officer" (with 2 red bands on their uniform) would know the location of the <span class="recap-location">Redbrand Hideout</span>. Prisoners are being held, transferred, or killed by Redbrands in their hideout?
 - More people going missing in town - Bart says the blacksmith <span class="recap-npc">Gil</span> has gone missing now, in addition to <span class="recap-npc">Sheriff Clint</span>.
-- Drow informed players of <span class="recap-faction">Black Spider's</span> distaste for <span class="recap-faction">Redbrands</span>. She shared that there are flammable barrels outside the tavern and given <span class="recap-item">Scroll of Fog Cloud</span>.
+- Drow informed players of <span class="recap-faction">Black Spider's</span> distaste for <span class="recap-faction">Redbrands</span>. She shared that there are flammable barrels outside the tavern and the party was given the <span class="recap-item">Scroll of Fog Cloud</span>.
 
 ---
 
