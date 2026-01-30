@@ -93,6 +93,33 @@ main {
   padding-top: var(--space-5);
 }
 
+.lore-banner {
+  padding: var(--space-4) 0;
+  background:
+    radial-gradient(400px circle at 10% 0%, rgba(127, 191, 224, 0.16), transparent 65%),
+    var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.lore-banner__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.lore-banner__title {
+  margin: var(--space-2) 0 0;
+  font-weight: 600;
+}
+
+.lore-banner__copy {
+  margin: var(--space-2) 0 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
 a {
   color: var(--accent);
   text-decoration: none;

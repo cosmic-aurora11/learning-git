@@ -5,6 +5,17 @@ import CharacterCard from '../../components/CharacterCard.astro';
 import { getCollection } from 'astro:content';
 
 const characters = await getCollection('characters');
+const characterOrder = ['rock', 'pompo', 'macha', 'eris'];
+const orderedCharacters = [...characters].sort((a, b) => {
+  const aIndex = characterOrder.indexOf(a.slug);
+  const bIndex = characterOrder.indexOf(b.slug);
+  if (aIndex === -1 && bIndex === -1) {
+    return a.data.name.localeCompare(b.data.name);
+  }
+  if (aIndex === -1) return 1;
+  if (bIndex === -1) return -1;
+  return aIndex - bIndex;
+});
 ---
 
 <BaseLayout title="Characters | The Arcane Atlas">
@@ -16,7 +27,7 @@ const characters = await getCollection('characters');
         <PartyGoldWidget />
       </div>
       <div class="grid grid-4">
-        {characters.map((character) => (
+        {orderedCharacters.map((character) => (
           <CharacterCard character={character} />
         ))}
       </div>

@@ -172,7 +172,7 @@ spells:
 tags: ["healer", "lore", "dragonline"]
 portrait: "/images/characters/placeholder.svg"
 sheetUrl: "https://drive.google.com/file/d/1dbKh77wUNldjObwDrb6zlKzru83YvAWx/view?usp=sharing"
-blurb: "A steadfast cleric who carries ancient hymns in her blood." 
+blurb: "A steadfast cleric whose ancestral blood  carries ancient hymns of divinity." 
 ---
 
 ## Overview

@@ -2,8 +2,9 @@
 import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 
-const { title = 'Campaign Hub', description = '' } = Astro.props;
+const { title = 'Campaign Hub', description = '', robots = '' } = Astro.props;
 const pathname = Astro.url.pathname;
+const isDev = import.meta.env.DEV;
 const navItems = [
   { href: '/characters', label: 'Characters' },
   { href: '/shops', label: 'Shops' },
@@ -25,6 +26,7 @@ const loreTitleId = 'lore-wip-title';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    {robots && <meta name="robots" content={robots} />}
   </head>
   <body>
     <header class="site-header">
@@ -42,7 +44,7 @@ const loreTitleId = 'lore-wip-title';
                   : pathname.startsWith(item.href));
                 return (
                   <li>
-                    {item.label === 'Lore' ? (
+                    {item.label === 'Lore' && !isDev ? (
                       <button
                         class={`nav-wip ${isActive ? 'active' : ''}`}
                         type="button"
@@ -73,7 +75,7 @@ const loreTitleId = 'lore-wip-title';
                   : pathname.startsWith(item.href));
                 return (
                   <li>
-                    {item.label === 'Lore' ? (
+                    {item.label === 'Lore' && !isDev ? (
                       <button
                         class={`nav-wip ${isActive ? 'active' : ''}`}
                         type="button"
@@ -102,7 +104,7 @@ const loreTitleId = 'lore-wip-title';
                 : pathname.startsWith(item.href));
               return (
                 <li>
-                  {item.label === 'Lore' ? (
+                  {item.label === 'Lore' && !isDev ? (
                     <button
                       class={`nav-wip ${isActive ? 'active' : ''}`}
                       type="button"

@@ -106,7 +106,7 @@ abilities:
 tags: ["arcane", "improv", "wildfire"]
 portrait: "/images/characters/pompo.jpeg"
 sheetUrl: "https://drive.google.com/file/d/1zEylCzVL5UIa7bY_cQ3lEU42ZhTHfVWa/view?usp=sharing"
-blurb: "A spark-happy sorcerer who treats magic like a conversation." 
+blurb: "A sorcerer whose gift of gab gets him in as much trouble as his wild magic surges." 
 history: "Raised among street performers in Glassharbor, Pompo learned to twist wild magic into a show. A mentor's disappearance pushed him toward adventuring, hunting for clues in every arcane whisper."
 roleplayTips:
   - "Lead with curiosity when magic is involved, even in tense scenes."

@@ -2,6 +2,12 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
+const isDev = import.meta.env.DEV;
+
+if (!isDev) {
+  return Astro.redirect('/lore-coming-soon');
+}
+
 const loreEntries = await getCollection('lore');
 const categories = ['Regions/Locations', 'Factions', 'Important NPCs', 'Magical Oddities'];
 const grouped = await Promise.all(
@@ -15,7 +21,7 @@ const grouped = await Promise.all(
 );
 ---
 
-<BaseLayout title="Lore | The Arcane Atlas">
+<BaseLayout title="Lore | The Arcane Atlas" robots="noindex, nofollow">
   <section class="section page-hero">
     <div class="container">
       <h1>Living Lore</h1>

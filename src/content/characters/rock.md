@@ -105,7 +105,7 @@ abilities:
 tags: ["bruiser", "axe", "frontline"]
 portrait: "/images/characters/rock.png"
 sheetUrl: "https://drive.google.com/file/d/1b-nSmKTmt9cb8g1bjfgqTVWr6ShmrHUy/view?usp=sharing"
-blurb: "A dwarf who aims to balance gruffness and joy."
+blurb: "A proud dwarf who is as comfortable making stew as he is swinging a greataxe."
 ---
 
 ## Overview
