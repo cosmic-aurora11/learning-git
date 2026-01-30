@@ -535,19 +535,20 @@ button.card:hover,
   border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
-.recap-name {
-  color: var(--accent);
-  font-weight: 600;
+.recap-npc {
+  color: #E3B36A;
 }
 
 .recap-location {
-  color: var(--accent-600);
-  font-weight: 600;
+  color: #7FA6B8;
+}
+
+.recap-item {
+  color: #B28DFF;
 }
 
 .recap-faction {
-  color: var(--accent-700);
-  font-weight: 600;
+  color: #C26A6A;
 }
 
 .recap-content ul li + li {
