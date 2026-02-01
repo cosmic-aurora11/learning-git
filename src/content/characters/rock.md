@@ -4,7 +4,7 @@ race: "Dwarf"
 class: "Barbarian"
 ac: 14
 hp: 32
-xpPips: 2
+xpPips: 4
 proficiencies: ["Acrobatics", "Animal Handling", "Nature", "Perception", "Performance"]
 abilities:
   - name: "Reckless Attack"

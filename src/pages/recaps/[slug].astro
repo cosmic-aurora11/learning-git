@@ -36,7 +36,8 @@ const { Content } = await recap.render();
         {previous ? (
           <a class="card" href={`/recaps/${previous.slug}`}>
             <p class="muted">Previous</p>
-            <strong>{previous.data.title}</strong>
+            <p class="recap-nav-date">{previous.data.date}</p>
+            <strong class="recap-nav-title">{previous.data.title}</strong>
           </a>
         ) : (
           <div class="card" aria-disabled="true">
@@ -47,7 +48,8 @@ const { Content } = await recap.render();
         {next ? (
           <a class="card" href={`/recaps/${next.slug}`}>
             <p class="muted">Next</p>
-            <strong>{next.data.title}</strong>
+            <p class="recap-nav-date">{next.data.date}</p>
+            <strong class="recap-nav-title">{next.data.title}</strong>
           </a>
         ) : (
           <div class="card" aria-disabled="true">
@@ -67,5 +69,19 @@ const { Content } = await recap.render();
 
   .recap-content ul li + li {
     margin-top: 10px;
+  }
+
+  .recap-nav-date {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+    opacity: 0.8;
+  }
+
+  .recap-nav-title {
+    display: block;
+    margin-top: 0.35rem;
+    white-space: normal;
+    word-break: break-word;
   }
 </style>

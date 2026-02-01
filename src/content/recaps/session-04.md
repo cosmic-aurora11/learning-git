@@ -1,7 +1,7 @@
 ---
 title: "Session Recap — Graveyard & Phandalin"
 sessionNumber: 4
-date: "1/10/25"
+date: "1/10/26"
 tags: ["phandalin", "redbrands", "black-spider"]
 summary: "The party defeated Soryn Wynterveil, returned to Phandalin to continue the search for Gundren, while uncovering more about the Redbrands and the Black Spider."
 ---

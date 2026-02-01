@@ -4,7 +4,7 @@ race: "Dragonborn"
 class: "Cleric"
 ac: 15
 hp: 23
-xpPips: 2
+xpPips: 4
 proficiencies: ["Athletics", "Insight", "Intimidation", "Religion"]
 abilities:
   - name: "Breath Weapon"
