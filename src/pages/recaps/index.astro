@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content';
 const recaps = await getCollection('recaps');
 const sortedRecaps = recaps.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 const tags = Array.from(new Set(sortedRecaps.flatMap((recap) => recap.data.tags))).sort();
-const timelineRecaps = sortedRecaps.filter((recap) => [5, 4].includes(recap.data.sessionNumber));
+const timelineRecaps = sortedRecaps;
 const useTimelineLayout = true;
 ---
 
