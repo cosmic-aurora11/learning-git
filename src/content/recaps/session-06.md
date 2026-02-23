@@ -33,6 +33,8 @@ The party has pushed deeper beneath <span class="recap-location">Tresendar Manor
 ## 🧩 Unresolved
 - <span class="recap-npc">Glasstaff</span> is still alive, and the <span class="recap-npc">Sentinel</span> summoning is underway.
 - The <span class="recap-faction">Black Spider</span> now has <span class="recap-npc">Gundren</span>, and their destination remains unknown.
+- The <span class="recap-item">Unique Key</span> found on the necromancer was given to <span class="recap-npc">Bart</span>, to investigate further with <span class="recap-npc">Sister Garaele</span>.
+- The party is awaiting letters at <span class="recap-location">Bart's Provisions</span>: from the Drow regarding a proposed trade, and Eris is awaiting a note from <span class="recap-npc">Sister Garaele</span> regarding induction to the <span class="recap-faction">Order of the Gauntlet</span>.
 
 ---
 
