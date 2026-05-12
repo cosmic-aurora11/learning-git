@@ -19,21 +19,11 @@ const nextSession = session || siteData.nextSession;
     </p>
   )}
   {nextSession.note && <p class="muted">{nextSession.note}</p>}
-  <div class="star-widget__actions" aria-label="Session actions">
-    <a class="button" href="https://calendarlink.com/event/TMPnw">Add to Calendar</a>
-  </div>
 </div>
 
 <style>
   .muted {
     color: var(--muted);
-  }
-
-  .star-widget__actions {
-    display: flex;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-    margin-top: var(--space-4);
   }
 
   .star-widget__date {
