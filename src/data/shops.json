@@ -2,7 +2,7 @@
   {
     "name": "Wondrous Wares & Whimsies",
     "slug": "gilded-anvil",
-    "isOpen": true,
+    "isOpen": false,
     "location": "Sword Coast, Traveling Merchant",
     "flavor": "A merchant who travels across the Sword Coast, selling wondrous wares and whimsies.",
     "inventory": [

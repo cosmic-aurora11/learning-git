@@ -5,7 +5,9 @@ const recaps = defineCollection({
   schema: z.object({
     title: z.string(),
     sessionNumber: z.number(),
+    sessionLabel: z.string().optional(),
     date: z.string(),
+    dateLabel: z.string().optional(),
     tags: z.array(z.string()),
     summary: z.string(),
     heroImage: z.string().optional()

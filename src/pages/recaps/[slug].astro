@@ -18,6 +18,8 @@ const sortedRecaps = allRecaps.sort(
 const index = sortedRecaps.findIndex((item) => item.slug === recap.slug);
 const previous = sortedRecaps[index + 1];
 const next = sortedRecaps[index - 1];
+const sessionDisplay = recap.data.sessionLabel ?? recap.data.sessionNumber;
+const dateDisplay = recap.data.dateLabel ?? recap.data.date;
 const { Content } = await recap.render();
 ---
 
@@ -27,7 +29,7 @@ const { Content } = await recap.render();
       <a class="chip" href="/recaps">← Back to recaps</a>
       <div class="card" style="margin-top:1.5rem;">
         <h1>{recap.data.title}</h1>
-        <p class="muted">Session #: {recap.data.sessionNumber} | Date: {recap.data.date}</p>
+        <p class="muted">Session #: {sessionDisplay} | Date: {dateDisplay}</p>
       </div>
       <article class="section recap-content">
         <Content />

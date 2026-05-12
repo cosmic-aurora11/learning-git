@@ -19,7 +19,7 @@ const useTimelineLayout = true;
           {timelineRecaps.map((recap) => (
             <article class="timeline-item">
               <div class="timeline-content card">
-                <div class="timeline-label">Session {recap.data.sessionNumber} · {recap.data.date}</div>
+                <div class="timeline-label">Session {recap.data.sessionLabel ?? recap.data.sessionNumber} · {recap.data.dateLabel ?? recap.data.date}</div>
                 <h3>{recap.data.title}</h3>
                 <p class="muted">{recap.data.summary}</p>
                 <a class="button" href={`/recaps/${recap.slug}`}>Read Full Recap</a>
@@ -51,7 +51,9 @@ const useTimelineLayout = true;
     const recaps = JSON.parse(`${JSON.stringify(timelineRecaps.map((recap) => ({
       title: recap.data.title,
       sessionNumber: recap.data.sessionNumber,
+      sessionLabel: recap.data.sessionLabel,
       date: recap.data.date,
+      dateLabel: recap.data.dateLabel,
       summary: recap.data.summary,
       tags: recap.data.tags,
       slug: recap.slug
@@ -77,7 +79,7 @@ const useTimelineLayout = true;
           (recap) => `
           <article class="card">
             <h3>${recap.title}</h3>
-            <p class="muted">Session ${recap.sessionNumber} · ${recap.date}</p>
+            <p class="muted">Session ${recap.sessionLabel ?? recap.sessionNumber} · ${recap.dateLabel ?? recap.date}</p>
             <p>${recap.summary}</p>
             <a class="button" href="/recaps/${recap.slug}">Read Full Recap</a>
           </article>

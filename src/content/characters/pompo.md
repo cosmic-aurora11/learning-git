@@ -4,7 +4,7 @@ race: "Human"
 class: "Sorcerer"
 ac: 12
 hp: 19
-xpPips: 4
+xpPips: 5
 proficiencies: ["Arcana", "Deception", "Insight", "Sleight of Hand"]
 abilities:
   - name: "Flexible Casting"

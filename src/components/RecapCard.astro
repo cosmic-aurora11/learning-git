@@ -1,10 +1,12 @@
 ---
 const { recap } = Astro.props;
+const sessionDisplay = recap.data.sessionLabel ?? recap.data.sessionNumber;
+const dateDisplay = recap.data.dateLabel ?? recap.data.date;
 ---
 
 <article class="card">
   <h3>{recap.data.title}</h3>
-  <p class="muted">Session {recap.data.sessionNumber} · {recap.data.date}</p>
+  <p class="muted">Session {sessionDisplay} · {dateDisplay}</p>
   <p>{recap.data.summary}</p>
   <a class="button" href={`/recaps/${recap.slug}`}>Read Full Recap</a>
 </article>

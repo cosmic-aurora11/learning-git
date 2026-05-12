@@ -56,6 +56,10 @@ Party-member exception:
 - Do not highlight these party names in recaps: `Eris`, `Rock`, `Pompo`, `Macha`.
 - Keep those names as plain text.
 
+Repeat highlight rule:
+- Within a single bullet or paragraph, highlight a specific character, place, faction, or item only on first mention.
+- The same entity can be highlighted again in another bullet or section.
+
 ## 5) Connection to previous/next session
 
 No manual linking is needed inside recap markdown.
