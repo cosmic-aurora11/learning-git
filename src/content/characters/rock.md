@@ -3,7 +3,7 @@ name: "Rock"
 race: "Dwarf"
 class: "Barbarian"
 ac: 14
-hp: 32
+hp: 42
 xpPips: 0
 proficiencies: ["Acrobatics", "Animal Handling", "Nature", "Perception", "Performance"]
 abilities:
