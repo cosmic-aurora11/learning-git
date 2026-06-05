@@ -3,8 +3,8 @@ name: "Eris"
 race: "Dragonborn"
 class: "Cleric"
 ac: 15
-hp: 23
-xpPips: 5
+hp: 31
+xpPips: 0
 proficiencies: ["Athletics", "Insight", "Intimidation", "Religion"]
 abilities:
   - name: "Breath Weapon"
@@ -170,8 +170,8 @@ spells:
           details: "Casting Time: Bonus Action. Range: Touch. Concentration: Yes (up to 1 hour). Effect: Weapon becomes magical and gains +1 to attack and damage rolls; higher slots can increase the bonus."
           order: 5
 tags: ["healer", "lore", "dragonline"]
-portrait: "/images/characters/placeholder.svg"
-sheetUrl: "https://drive.google.com/file/d/1dbKh77wUNldjObwDrb6zlKzru83YvAWx/view?usp=sharing"
+portrait: "/images/characters/eris.png"
+sheetUrl: "https://drive.google.com/file/d/1nLrC3_n7rwPm-IAYzJwRmVdEraIpHRUR/view?usp=sharing"
 blurb: "A steadfast cleric whose ancestral blood  carries ancient hymns of divinity." 
 ---
 
